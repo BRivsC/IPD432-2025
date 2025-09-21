@@ -1,0 +1,53 @@
+`timescale 1ns / 1ps
+// Testbench para la FSM diseñada en la pregunta 3 de la tarea 1
+module fsm_testbench();
+
+logic clk, resetN, PB_status, IncPulse_out;
+
+
+PB_FSM #(
+    .N_INCREMENT_DELAY_CONTINUOUS    (7)
+) u_PB_FSM (
+    .clk                             (clk),
+    .resetN                          (resetN),
+    .PB_status                       (PB_status),
+    .IncPulse_out                    (IncPulse_out)
+);
+
+always #1 clk = ~clk;
+
+initial begin
+    clk = 1'b0;
+    resetN = 1'b0;
+    PB_status = 1'b0;
+    #5 resetN = 1'b1;
+    #10
+    // Pulsación larga 1
+    PB_status = 1'b1;
+    #20 PB_status = 1'b0;
+
+    // Pulsación corta 1
+    PB_status = 1'b1;
+    #3 PB_status = 1'b0;
+    #17
+
+    // Pulsación corta 2
+    PB_status = 1'b1;
+    #6 PB_status = 1'b0;
+    #24
+
+    // Pulsación del largo del delay
+    PB_status = 1'b1;
+    #10 PB_status = 1'b0;
+    #20
+
+    // Pulsación más larga 
+    PB_status = 1'b1;
+    #100 PB_status = 1'b0;
+
+    // Fin de la simulación
+    #50
+    $finish;
+end
+
+endmodule
