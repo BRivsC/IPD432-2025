@@ -27,12 +27,12 @@ module time_mem(
     input   logic add_hour, add_minute, add_second, config_en, clk, rst,
     output  logic [3:0] h_tens, h_units, m_tens, m_units, s_tens, s_units
     );
-    localparam COUNTER_BITS = 32;
     // El reloj se implementa como una serie de contadores que llegan hasta un cierto valor límite.
     // Al alcanzar ese valor, mandan un bit al siguiente dígito más significativo y se auto resetean
+    localparam COUNTER_BITS = 4;    //  Bits usados por los contadores. Como cuentan a lo mucho hasta 9, uso 4 bits
 
     // rst tras superar 23:59:59
-    logic global_overflow_rst;
+    logic midnight_rst;
     
     // Permitir sumar horas/minutos si se pulsa botón mientras se está en el modo correcto (normal para reloj, alarma para alarma) 
     logic allow_hour_cfg;
@@ -49,8 +49,8 @@ module time_mem(
         .MAX_COUNT     (9)
     ) second_unit_counter (
         .clk           (clk),
-        //.rst           (rst||second_unit_done||global_overflow_rst),
-        .rst           (rst||global_overflow_rst),
+        .rst           (rst||second_unit_done||midnight_rst),
+        //.rst           (rst||midnight_rst),
         .en            (add_second),
         .count_done    (second_unit_done),
         .counter       (s_units)
@@ -62,7 +62,7 @@ module time_mem(
         .MAX_COUNT     (5)
     ) second_tens_counter (
         .clk           (clk),
-        .rst           (rst||global_overflow_rst),
+        .rst           (rst||second_tens_done||midnight_rst),
         .en            (second_unit_done),
         .count_done    (second_tens_done),
         .counter       (s_tens)
@@ -76,7 +76,7 @@ module time_mem(
         .MAX_COUNT     (9)
     ) minute_units_counter (
         .clk           (clk),
-        .rst           (rst||global_overflow_rst),
+        .rst           (rst||minute_unit_done||midnight_rst),
         .en            (second_tens_done||allow_minute_cfg),
         .count_done    (minute_unit_done),
         .counter       (m_units)
@@ -89,7 +89,7 @@ module time_mem(
         .MAX_COUNT     (5)
     ) minute_tens_counter (
         .clk           (clk),
-        .rst           (rst||global_overflow_rst),
+        .rst           (rst||minute_tens_done||midnight_rst),
         .en            (minute_unit_done),
         .count_done    (minute_tens_done),
         .counter       (m_tens)
@@ -103,7 +103,7 @@ module time_mem(
         .MAX_COUNT     (9)
     ) hour_units_counter (
         .clk           (clk),
-        .rst           (rst||global_overflow_rst),
+        .rst           (rst||hour_unit_done||midnight_rst),
         .en            (minute_tens_done||allow_hour_cfg),
         .count_done    (hour_unit_done),
         .counter       (h_units)
@@ -116,35 +116,47 @@ module time_mem(
         .MAX_COUNT     (2)
     ) hour_tens_counter (
         .clk           (clk),
-        .rst           (rst||global_overflow_rst),
+        .rst           (rst||hour_tens_done||midnight_rst),
         .en            (hour_unit_done),
         .count_done    (hour_tens_done),
         .counter       (h_tens)
     );
+
+    // Overflow de la medianoche
+    // Revisa si las horas están en 23 y se quiere incrementar a 24. Lleva todo el reloj a 00:00:00 con un reset 
+    // Evaluar si es posible ver todos los dígitos!
+    always_comb begin
+        if (h_tens == 2 && h_units == 3 && minute_tens_done) begin
+            midnight_rst = 1;
+        end else begin
+            midnight_rst = 0;
+        end
+    end
+
 
 endmodule
 
 // Módulo auxiliar: contador con enable y bit al terminar
 // MAX_COUNT representa el número al que llegará antes de indicar que terminó
 module nbit_counter_enable #(parameter N = 32, MAX_COUNT = 9)(
-	input logic clk, rst, en,
+    input  logic clk, rst, en,
     output logic count_done,
-	output logic [N-1:0] counter
-	);
-    always_ff @(posedge clk) begin 
-        count_done <= 'd0;
+    output logic [N-1:0] counter
+);
+    always_ff @(posedge clk) begin
         if (rst) begin
-            counter <= 'd0; 
+            counter     <= 'd0;
+            count_done  <= 'd0;
+        end else if (en) begin
+            if (counter == MAX_COUNT) begin
+                counter     <= 'd0;
+                count_done  <= 'd1;
+            end else begin
+                counter     <= counter + 1;
+                count_done  <= 'd0;
+            end
+        end else begin
+            count_done  <= 'd0;
         end
-        else if(en) // Incrementar solo si recibe el enable (en)
-            counter <= counter + 1;
-        
-        // Indicador de listo
-        if (counter >= MAX_COUNT) begin
-            count_done <= 'd1;
-            counter <= 'd0;
-        end
-
-
     end
 endmodule
