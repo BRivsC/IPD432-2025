@@ -41,7 +41,8 @@ module time_mem(
     logic allow_minute_cfg;
     assign allow_minute_cfg = add_minute && config_en;
 
-    // Contador de segundos
+
+    // Contadores de segundos
     logic second_unit_done;
     nbit_counter_enable #(
         .N             (COUNTER_BITS),
@@ -67,6 +68,59 @@ module time_mem(
         .counter       (s_tens)
     );
 
+
+    // Contadores de minutos
+    logic minute_unit_done;
+    nbit_counter_enable #(
+        .N             (COUNTER_BITS),
+        .MAX_COUNT     (9)
+    ) minute_units_counter (
+        .clk           (clk),
+        .rst           (rst||global_overflow_rst),
+        .en            (second_tens_done||allow_minute_cfg),
+        .count_done    (minute_unit_done),
+        .counter       (m_units)
+    );
+
+
+    logic minute_tens_done;
+    nbit_counter_enable #(
+        .N             (COUNTER_BITS),
+        .MAX_COUNT     (5)
+    ) minute_tens_counter (
+        .clk           (clk),
+        .rst           (rst||global_overflow_rst),
+        .en            (minute_unit_done),
+        .count_done    (minute_tens_done),
+        .counter       (m_tens)
+    );
+
+
+    // Contadores de horas
+    logic hour_unit_done;
+    nbit_counter_enable #(
+        .N             (COUNTER_BITS),
+        .MAX_COUNT     (9)
+    ) hour_units_counter (
+        .clk           (clk),
+        .rst           (rst||global_overflow_rst),
+        .en            (minute_tens_done||allow_hour_cfg),
+        .count_done    (hour_unit_done),
+        .counter       (h_units)
+    );
+
+
+    logic hour_tens_done;
+    nbit_counter_enable #(
+        .N             (COUNTER_BITS),
+        .MAX_COUNT     (2)
+    ) hour_tens_counter (
+        .clk           (clk),
+        .rst           (rst||global_overflow_rst),
+        .en            (hour_unit_done),
+        .count_done    (hour_tens_done),
+        .counter       (h_tens)
+    );
 
 endmodule
 
