@@ -84,6 +84,7 @@ module PB_Debouncer_FSM #(
                                 PB_released_pulse = 1'b1;
                                 next_state = PB_IDLE;
                             end    
+              default:    next_state = PB_IDLE;
          endcase
     end    
 

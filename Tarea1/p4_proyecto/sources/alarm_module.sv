@@ -38,7 +38,7 @@ module alarm_module (
     time_mem u_time_mem (
         .add_hour      (add_alm_hour),
         .add_minute    (add_alm_minute),
-        .add_second    (),
+        .add_second    (1'b0),
         .config_en     (config_en),
         .clk           (clk),
         .rst           (rst),

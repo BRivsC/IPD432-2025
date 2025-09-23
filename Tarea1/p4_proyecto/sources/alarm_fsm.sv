@@ -72,6 +72,9 @@ always_comb begin
 			else NextState = ALM_ACTIVE;
 		end
 
+		
+		default: NextState = ALM_IDLE;
+
 	endcase
 end
 

@@ -12,7 +12,7 @@ module T1_design1 #(
 
 logic rst;
 assign rst = ~resetN;
-
+logic PB_status; 
 PB_Debouncer_FSM #(
     .DELAY                (N_DEBOUNCER_DELAY)   // Number of clock pulses to check stable button pressing
 ) PB_Debouncer (

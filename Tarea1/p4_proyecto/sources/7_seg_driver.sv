@@ -208,12 +208,12 @@ module BCD_to_sevenSeg(
             4'd7: sevenSeg = 7'b0001111;
             4'd8: sevenSeg = 7'b0000000;
             4'd9: sevenSeg = 7'b0000100;
-            4'd10:sevenSeg = 7'b0001000; //A
-            4'd11:sevenSeg = 7'b1100000; //b
-            4'd12:sevenSeg = 7'b0110001; //C
-            4'd13:sevenSeg = 7'b1000010; //d
-            4'd14:sevenSeg = 7'b0110000; //E
-            4'd15:sevenSeg = 7'b0111000; //F
+            // 4'd10:sevenSeg = 7'b0001000; //A
+            // 4'd11:sevenSeg = 7'b1100000; //b
+            // 4'd12:sevenSeg = 7'b0110001; //C
+            // 4'd13:sevenSeg = 7'b1000010; //d
+            // 4'd14:sevenSeg = 7'b0110000; //E
+            // 4'd15:sevenSeg = 7'b0111000; //F
             default: sevenSeg = 7'b1111111; //por defecto apagaría todos 
         endcase
     end
@@ -223,20 +223,20 @@ endmodule
 //Contador de N bits (por defecto 4)
 //Pregunta 3.7 guía 2
 
-module nbit_counter #(parameter N=4)(
-     input  logic          clk, reset,
-     output logic [N-1:0]  count
-
-    );
-    always_ff @(posedge clk) begin //flip flop
-    //se activa al pasar por el canto de subida del reloj
-        if (reset) //si señal reset es 1...
-            count <= 'd0; //contador se reinicia
-        else
-            count <= count+1; //sino, va sumando en cada canto positivo
-    end
-endmodule
-
+//module nbit_counter #(parameter N=4)(
+//     input  logic          clk, reset,
+//     output logic [N-1:0]  count
+//
+//    );
+//    always_ff @(posedge clk) begin //flip flop
+//    //se activa al pasar por el canto de subida del reloj
+//        if (reset) //si señal reset es 1...
+//            count <= 'd0; //contador se reinicia
+//        else
+//            count <= count+1; //sino, va sumando en cada canto positivo
+//    end
+//endmodule
+//
 
 
 
@@ -281,4 +281,35 @@ module deco_binario_3_cold#(parameter N = 3)(
 
     end
     
+endmodule
+
+
+`timescale 1ns / 1ps
+//Pregunta 5.2
+
+
+module clock_divider
+#(parameter COUNTER_MAX = 200000) //nro de cantos de subida hasta invertir clk_out
+( input logic clk_in,
+  input logic reset,
+  output logic clk_out );
+
+  localparam DELAY_WIDTH = $clog2(COUNTER_MAX); //clog define el nro de bits necesarios pa representar el contador
+  logic [DELAY_WIDTH-1:0] counter = 'd0; //le epic contador
+
+  always_ff @(posedge clk_in) begin //se pasea por los cantos de reloj
+    if (reset == 1'b1) begin //reiniciar si hay reset
+
+        counter <= 'd0;
+        clk_out <= 0;
+    end else if (counter == COUNTER_MAX-1) begin
+
+        counter <= 'd0;
+        clk_out <= ~clk_out; //invierte en vez de subir y bajar cada cierta cantidad de cantos de subida
+    end else begin
+
+        counter <= counter + 'd1;
+        clk_out <= clk_out;
+    end
+    end
 endmodule

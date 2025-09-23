@@ -53,7 +53,8 @@ always_comb begin
 		S0: begin   
 			if (PB_status) 
                 NextState = S1;
-            
+            else 
+                NextState = S0;
 		end
         
         // S1: PB pulsado, se prepara para enviar pulso 
@@ -93,6 +94,7 @@ always_comb begin
                 NextState = S4;
             
         end
+        default: NextState = S0;
 
 	endcase
 end
