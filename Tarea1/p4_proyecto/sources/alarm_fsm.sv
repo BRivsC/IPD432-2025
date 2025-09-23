@@ -68,7 +68,8 @@ always_comb begin
 	// Alarma activada hasta que se reciba cualquier input
 		ALM_ACTIVE: begin
 			enable_seq = 1;
-			if (add_hour_pulse == 1 || add_minute_pulse == 1) NextState = ALM_IDLE;
+			// if (add_hour_pulse == 1 || add_minute_pulse == 1) NextState = ALM_IDLE;
+			if (config_en == 1) NextState = ALM_IDLE;
 			else NextState = ALM_ACTIVE;
 		end
 
