@@ -98,12 +98,20 @@ module time_mem(
 
     // Contadores de horas
     logic hour_unit_done;
+    logic hour_reset;
+    always_comb begin
+        if (h_tens >= 4'd2 && h_units >= 4'd4) begin
+            hour_reset = 1;
+        end else begin
+            hour_reset = 0;
+        end
+    end
     nbit_counter_enable #(
         .N             (COUNTER_BITS),
         .MAX_COUNT     (9)
     ) hour_units_counter (
         .clk           (clk),
-        .rst           (rst||hour_unit_done||midnight_rst),
+        .rst           (rst||hour_unit_done||midnight_rst||hour_reset),
         .en            (minute_tens_done||allow_hour_cfg),
         .count_done    (hour_unit_done),
         .counter       (h_units)
@@ -116,7 +124,7 @@ module time_mem(
         .MAX_COUNT     (2)
     ) hour_tens_counter (
         .clk           (clk),
-        .rst           (rst||hour_tens_done||midnight_rst),
+        .rst           (rst||hour_tens_done||midnight_rst||hour_reset),
         .en            (hour_unit_done),
         .count_done    (hour_tens_done),
         .counter       (h_tens)

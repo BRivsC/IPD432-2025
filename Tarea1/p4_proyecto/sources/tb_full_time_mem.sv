@@ -27,7 +27,7 @@ module tb_full_time_mem();
 
     always #5 clk = ~clk;
 
-    always #10 add_second = ~add_second; // Agregar segundos a cada rato
+    //always #10 add_second = ~add_second; // Agregar segundos a cada rato
     //always #5 add_second = ~add_second; // Agregar segundos a cada rato
 
     
@@ -38,6 +38,7 @@ module tb_full_time_mem();
         add_second = 0;
         add_hour   = 0;
         add_minute = 0;
+        config_en  = 1;
 
 
         #12;
@@ -50,7 +51,8 @@ module tb_full_time_mem();
         m_units = 'd9;
         s_tens  = 'd4;
         s_units = 'd0;
-
+        #10 add_hour = 1;
+        #10 add_hour = 0;
         #100 
 
         // Probar configuración de minutos y horas
