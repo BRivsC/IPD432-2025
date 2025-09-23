@@ -126,7 +126,7 @@ module time_mem(
     // Revisa si las horas están en 23 y se quiere incrementar a 24. Lleva todo el reloj a 00:00:00 con un reset 
     // Evaluar si es posible ver todos los dígitos!
     always_comb begin
-        if (h_tens == 2 && h_units == 3 && minute_tens_done) begin
+        if (h_tens >= 2 && h_units >= 3 && minute_tens_done) begin
             midnight_rst = 1;
         end else begin
             midnight_rst = 0;

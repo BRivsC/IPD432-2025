@@ -44,6 +44,11 @@ initial begin
     // Pulsación más larga 
     PB_status = 1'b1;
     #100 PB_status = 1'b0;
+    
+    // Reiniciar con PB_status constante
+    #20 PB_status = 1'b1;
+    resetN = 1'b0;
+    #10 resetN = 1'b1;
 
     // Fin de la simulación
     #50

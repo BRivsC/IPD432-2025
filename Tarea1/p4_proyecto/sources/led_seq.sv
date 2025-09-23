@@ -5,20 +5,21 @@
 module led_seq(
     input  logic clk_1s, en,
     output logic [6:0] led_seq_out
-    );
+);
 
-    always_comb begin
-        if (en) begin
-            case (clk_1s)
-                1'b0: led_seq_out = 7'b0101010; 
-                1'b1: led_seq_out = 7'b1010101; 
-                default: led_seq_out = 7'b0000000; 
-            endcase
+    logic [6:0] pattern;
+    logic state;
+
+    always_ff @(posedge clk_1s or negedge en) begin
+        if (!en) begin
+            state   <= 1'b0;
+            pattern <= 7'b0000000;
         end else begin
-            led_seq_out = 7'b0000000; // Todos apagados si no está habilitado
+            state   <= ~state;
+            pattern <= state ? 7'b1010101 : 7'b0101010;
         end
-
-
     end
-    
+
+    assign led_seq_out = en ? pattern : 7'b0000000;
+
 endmodule

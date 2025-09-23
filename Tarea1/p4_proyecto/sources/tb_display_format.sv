@@ -45,8 +45,18 @@ module tb_display_format;
         BCD_in = {4'd2, 4'd1, 4'd5, 4'd9, 4'd5, 4'd9};
         #1;
         
+        // Casos problemáticos: 20-22, 12
+        toggle_ampm = 1'b1;
+        // 21:59:59 en BCD: h_tens=2, h_units=1, m_tens=5, m_units=9, s_tens=5, s_units=9
+        #1 BCD_in = {4'd2, 4'd1, 4'd5, 4'd9, 4'd5, 4'd9};
+        #1 BCD_in = {4'd2, 4'd2, 4'd5, 4'd9, 4'd5, 4'd9};
+        #1 BCD_in = {4'd2, 4'd3, 4'd5, 4'd9, 4'd5, 4'd9};
+        #1 BCD_in = {4'd0, 4'd0, 4'd5, 4'd9, 4'd5, 4'd9};
+        #1 BCD_in = {4'd1, 4'd2, 4'd5, 4'd9, 4'd5, 4'd9};
+        
+        
 
-        $finish;
+        #1 $finish;
     end
 
 endmodule

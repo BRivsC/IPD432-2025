@@ -4,7 +4,7 @@
 //          Conversor de formato 24h a AM/PM
 //          Reloj principal
 //          Módulo de alarma
-//          Divisor de frecuencias a 1 segundo
+//          Generador de pulsos a 1 Hz
 //          Debouncers con tren de pulso
 //          Una montonera de conexiones
 //
@@ -20,31 +20,32 @@ module top_reloj_alarma (
     input  logic        SW1,  // 0: normal, 1: set alarma
     input  logic        CLK100MHZ,
     input  logic        CPU_RESETN,
-    output logic        CA, CB, CC, CD, CE, CF, CG, DP,
+    output logic        CA, CB, CC, CD, CE, CF, CG, //DP,
     output logic [7:0]  AN,     //  {AN7, AN6, AN5, AN4, AN3, AN2, AN1, AN0}
     output logic [6:0]  LEDS_ALARMA,    
     output logic        LED0          
 );
     // Señales intermedias
     logic  add_hour_pulse, add_minute_pulse; // Pulsos debounceados de los botones
-    logic  clk_1s;
     logic  rst;
     assign rst = ~CPU_RESETN;
     
     // logic [6:0]  segments,   //  {CA, CB, CC, CD, CE, CF, CG}
     //assign {CA, CB, CC, CD, CE, CF, CG} = segments;
 
-    logic separador;
-    assign separador = AN[5];
-
-    assign DP = ~separador;    // DP para separar horas de minutos
+    //logic separador;
+    //assign separador = AN[5];
+//
+    //assign DP = ~separador;    // DP para separar horas de minutos
 
     // Parámetros 
-    localparam DEBOUNCER_DELAY_1S = 1_000_000;
-    localparam HOLD_DELAY_500MS   = 500_000;
-    localparam FREQ_DIV_COUNT_1S  = 1_000_000;  // Considera clk de 100MHz
-    localparam MAX_BCD_SIZE       = 32;     
+    localparam DEBOUNCER_DELAY_1S    = 100_000_000;
+    localparam PULSE_GEN_DELAY_1HZ   = 100_000_000;
+    localparam HOLD_DELAY_500MS      = 50_000_000;
+    localparam FREQ_DIV_COUNT_1S     = 100_000_000;  // Considera clk de 100MHz
+    localparam MAX_BCD_SIZE          = 32;     
     localparam DRIVER_7SEG_MAX_COUNT = 3;   
+    localparam DISPLAY_REFRESH_RATE  = 100_000; // Nro de cantos de reloj para alternar display
 
     // Debouncers con tren de pulso
     T1_design1 #(
@@ -67,13 +68,24 @@ module top_reloj_alarma (
         .IncPulse_out                    (add_minute_pulse)
     );
 
-    // Divisor de frecuencia a 1 Hz
-    freq_divider #(
-        .COUNTER_MAX    (FREQ_DIV_COUNT_1S) //nro de cantos de subida hasta invertir clk_out
-    ) freq_divider_1hz (
-        .clk_in         (CLK100MHZ),
-        .reset          (rst),
-        .clk_out        (clk_1s)
+    //  // Divisor de frecuencia a 1 Hz
+    //  freq_divider #(
+    //      .COUNTER_MAX    (FREQ_DIV_COUNT_1S) //nro de cantos de subida hasta invertir clk_out
+    //  ) freq_divider_1hz (
+    //      .clk_in         (CLK100MHZ),
+    //      .reset          (rst),
+    //      .clk_out        (clk_1s)
+    //  );
+
+    // Generador de pulsos a 1 Hz
+    logic pulse_1hz;
+    PB_FSM #(
+        .N_INCREMENT_DELAY_CONTINUOUS    (PULSE_GEN_DELAY_1HZ)
+    ) pulse_gen_1hz (
+        .clk                             (CLK100MHZ),
+        .resetN                          (CPU_RESETN),
+        .PB_status                       (1'b1), 
+        .IncPulse_out                    (pulse_1hz)
     );
 
     // Reloj principal
@@ -82,7 +94,7 @@ module top_reloj_alarma (
     time_mem main_clk (
         .add_hour      (add_hour_pulse),
         .add_minute    (add_minute_pulse),
-        .add_second    (clk_1s),
+        .add_second    (pulse_1hz),
         .config_en     (~SW1),
         .clk           (CLK100MHZ),
         .rst           (rst),
@@ -99,7 +111,7 @@ module top_reloj_alarma (
     alarm_module alarm_clk (
         .clk                 (CLK100MHZ),
         .rst                 (rst),
-        .clk_1s              (clk_1s),
+        .clk_1s              (pulse_1hz),
         .add_hour_pulse      (add_hour_pulse),
         .add_minute_pulse    (add_minute_pulse),
         .config_en           (SW1),
@@ -128,7 +140,8 @@ module top_reloj_alarma (
     // El driver mantiene apagado un cierto display si recibe F
     driver_7_seg #(
         .N            (MAX_BCD_SIZE),
-        .count_max    (DRIVER_7SEG_MAX_COUNT)
+        .count_max    (DRIVER_7SEG_MAX_COUNT),
+        .clk_divider_count (DISPLAY_REFRESH_RATE) 
     ) u_driver_7_seg (
         .clock        (CLK100MHZ),
         .reset        (rst),

@@ -22,7 +22,7 @@
 
 //Maximo: 32 bits
 
-module driver_7_seg#(parameter N = 32, count_max = 3)(
+module driver_7_seg#(parameter N = 32, count_max = 3, clk_divider_count = 200_000)(
     input  logic        clock,
     input  logic        reset,
     input  logic [N-1:0]BCD_in,     // informacion a mostrar
@@ -98,10 +98,13 @@ module driver_7_seg#(parameter N = 32, count_max = 3)(
         .out(anodos)
         );
         
-    clock_divider clock_divider(
-    .clk_in(clock),
-    .reset(reset),
-    .clk_out(clock_div)
+        
+    clock_divider #(
+        .COUNTER_MAX(clk_divider_count) 
+    ) u_clock_divider(
+        .clk_in(clock),
+        .reset(reset),
+        .clk_out(clock_div)
     );
 
     // Limitar numero de displays a encenderse
@@ -289,7 +292,7 @@ endmodule
 
 
 module clock_divider
-#(parameter COUNTER_MAX = 200000) //nro de cantos de subida hasta invertir clk_out
+#(parameter COUNTER_MAX = 200_000) //nro de cantos de subida hasta invertir clk_out
 ( input logic clk_in,
   input logic reset,
   output logic clk_out );
