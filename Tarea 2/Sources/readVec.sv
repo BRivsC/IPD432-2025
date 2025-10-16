@@ -4,7 +4,7 @@ module readVec(
     input logic [15:0]data_A,
     input logic [15:0]data_B,
     input logic enable,
-    input logic ctrl,
+    input logic ctrl,//1 para leer A, 0 para leer B
     input logic clk,
     input logic reset,
     output logic [15:0]result

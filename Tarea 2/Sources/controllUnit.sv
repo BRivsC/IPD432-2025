@@ -26,7 +26,7 @@ module controllUnit #(parameter NUM_ELEMENTOS = 1024)(
     input logic rx_ready,
     input logic tx_bussy,
     input logic op_ready,
-    input logic [6:0] command,
+    input logic [7:0] command,//dir memoria 0A, 1B, write, read, sum, avg, euc dist, man dist y dot prod
     output logic process_ctrl,
     output logic wea,
     output logic ena,
@@ -37,7 +37,7 @@ module controllUnit #(parameter NUM_ELEMENTOS = 1024)(
     output logic [9:0] mem_dir
     );
     
-    logic [6:0]operation;//operacion a realizar IDLE(0), WRITE,READ, SUM, AVG,EUCSUM
+    logic [7:0]operation;//operacion a realizar memoria activa, WRITE,READ, SUM, AVG,EUCDIST
     //MANDIST Y DOTPROD
     enum logic [8:0] {IDLE, WRITE, READ, SUM, AVG, EUC_DIST, MAN_DIST, DOT_PROD, SENDING} STATE, NEXT_STATE = IDLE;
     logic [10:0]counter ,counter_next, counter_sync;
@@ -73,18 +73,18 @@ module controllUnit #(parameter NUM_ELEMENTOS = 1024)(
             WRITE: begin
                 if(rx_ready)begin
                     mem_dir <= counter_sync[10:1];
-                    ena <= ~counter_sync[0];
-                    enb <= counter_sync[0];
-                    web <= counter_sync[0];
-                    wea <= ~counter_sync[0];
+                    ena <= ~operation[7];
+                    enb <= operation[7];
+                    web <= counter_sync[0] & operation[7];
+                    wea <= counter_sync[0] & ~operation[7];
                     counter_sync <= counter_sync + 1;
                 end
             end
             
             READ: begin
-                mem_dir <= counter[10:1];
-                ena <= ~counter[0];
-                enb <= counter[0];
+                mem_dir <= counter[9:0];
+                ena <= ~operation[7];
+                enb <= operation[7];
             end
             
             SUM: begin
@@ -148,7 +148,7 @@ module controllUnit #(parameter NUM_ELEMENTOS = 1024)(
                 end
             end
             
-            WRITE: begin
+            WRITE: begin//cambiar a realizar operacioness de estructura cada 2 rx_ready
                 if(rx_ready)begin
 //                    mem_dir = counter[10:1];
 //                    ena = ~counter[0];
@@ -168,7 +168,7 @@ module controllUnit #(parameter NUM_ELEMENTOS = 1024)(
 //                ena = ~counter[0];
 //                enb = counter[0];
                 enables = 6'b000001;
-                process_ctrl = ~counter[0];
+                process_ctrl = ~operation[7];
                 if(t >= 3) begin
                     NEXT_STATE = SENDING;
                     bt = 3'b000;
@@ -251,7 +251,7 @@ module controllUnit #(parameter NUM_ELEMENTOS = 1024)(
                         if(bt >= 2) begin
                             NEXT_STATE = READ;
                             counter_next = counter + 1;
-                            if(counter >= NUM_ELEMENTOS*2 - 1) NEXT_STATE = IDLE;
+                            if(counter >= NUM_ELEMENTOS - 1) NEXT_STATE = IDLE;
                         end
                         else begin
                             bt = bt + 1;
