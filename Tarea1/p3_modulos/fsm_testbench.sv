@@ -22,26 +22,23 @@ initial begin
     PB_status = 1'b0;
     #5 resetN = 1'b1;
     #10
-    // Pulsación larga 1
-    PB_status = 1'b1;
-    #20 PB_status = 1'b0;
-
-    // Pulsación corta 1
+    
+    //Pulsación menor a delay
     PB_status = 1'b1;
     #3 PB_status = 1'b0;
     #17
 
-    // Pulsación corta 2
+    // Pulsación mayor a delay
     PB_status = 1'b1;
-    #6 PB_status = 1'b0;
-    #24
+    #20 PB_status = 1'b0;
+    #20;
 
     // Pulsación del largo del delay
     PB_status = 1'b1;
-    #10 PB_status = 1'b0;
-    #20
+    #14 PB_status = 1'b0;
+    #20 $finish;
 
-    // Pulsación más larga 
+    // Pulsación de varios ciclos 
     PB_status = 1'b1;
     #100 PB_status = 1'b0;
     

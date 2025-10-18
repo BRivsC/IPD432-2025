@@ -22,9 +22,6 @@ initial begin
     PushButton = 1'b0;
     #5 resetN = 1'b1;
     #10
-    // Pulsación larga 1
-    PushButton = 1'b1;
-    #20 PushButton = 1'b0;
 
     // Pulsación corta 1
     PushButton = 1'b1;
@@ -35,6 +32,11 @@ initial begin
     PushButton = 1'b1;
     #6 PushButton = 1'b0;
     #24
+
+    // Pulsación larga 1
+    PushButton = 1'b1;
+    #20 PushButton = 1'b0;
+
 
     // Pulsación del largo del delay
     PushButton = 1'b1;
