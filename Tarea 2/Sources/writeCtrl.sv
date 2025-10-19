@@ -36,9 +36,11 @@ module writeCtrl(
 
         case(state)
             IDLE: begin
-                if(en)
+                if(en) begin
                     update_bram_sel = 1;    //  Actualizar apenas se reciba el enable
                     next_state = WAIT_LSB;
+                end else
+                    next_state = IDLE;
             end 
 
             WAIT_LSB: begin
@@ -63,8 +65,8 @@ module writeCtrl(
 
             WRITE_BRAM: begin
                 dout = dout_reg;
-                wea_a = bram_sel_mem;
-                wea_b = ~bram_sel_mem;
+                wea_a = ~bram_sel_mem; //  Escribir en BRAM A si bram_sel_mem es 0
+                wea_b = bram_sel_mem;  //  Escribir en BRAM B si bram_sel_mem es 1
                 next_state = WRITE_DONE;
             end
 

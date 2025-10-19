@@ -14,7 +14,7 @@ module inputInterface_tb;
     logic [9:0] bram_b_dout;
 
     // Instancia del DUT
-    inputInterface uut (
+    inputInterface dut (
         .clk(clk),
         .reset(reset),
         .rx_ready(rx_ready),
@@ -27,7 +27,7 @@ module inputInterface_tb;
     );
 
     // Generador de reloj
-    always #1 clk = ~clk;
+    always #5 clk = ~clk;
 
     // Testbench
     initial begin
@@ -84,14 +84,15 @@ module inputInterface_tb;
         // Paso 6: Definir bram_b_read_addr en 00_0000_0001
         #10 bram_b_read_addr = 10'b00_0000_0001;
 
+        // Para ver pq se borra la bram
+        #100 rx_data = 8'b0000_0001;
+        rx_ready = 1;
+        #10 rx_ready = 0;
+
         // Finalizar simulación
         #50 $finish;
     end
 
-    // Monitor para observar las señales
-    initial begin
-        $monitor("Time: %0t | rx_data: %b | command: %b | bram_a_dout: %d | bram_b_dout: %d",
-                 $time, rx_data, command, bram_a_dout, bram_b_dout);
-    end
+
 
 endmodule
