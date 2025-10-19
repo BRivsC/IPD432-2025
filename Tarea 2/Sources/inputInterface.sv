@@ -7,21 +7,30 @@
 //       Hacer una testbench
 
 module inputInterface(
-    input logic clk, reset, rx_ready,
+    input logic clk, reset, rx_ready, 
     input logic [7:0] rx_data,
     input logic [9:0] bram_a_read_addr, bram_b_read_addr,
+    output logic [7:0] command, //  Sigue formato para MainCtrl (dir memoria 0A, 1B, write, read, sum, avg, euc dist, man dist y dot prod)
     output logic [9:0] bram_a_dout, bram_b_dout
-
     );
 
     logic [9:0] write_data;
+    logic [9:0] write_address;
+    logic [6:0] command_out;
+    logic [7:0] recv_data;
+    logic wea_a, wea_b, en_write, select_bram;
+    assign recv_data = rx_data;
+    assign en_write = command_out[6]; //  en_write desde commandDecoder
+    assign command = {select_bram, command_out}; 
+
+
     writeCtrl u_writeCtrl (
         .clk           (clk),
         .reset         (reset),
         .rx_ready      (rx_ready),
-        .en            (en),
-        .bram_sel      (bram_sel),
-        .rx_data       (rx_data),
+        .en            (en_write),   
+        .bram_sel      (select_bram),
+        .rx_data       (recv_data),
         .write_done    (write_done),
         .inc           (inc),
         .wea_a         (wea_a),
@@ -29,56 +38,54 @@ module inputInterface(
         .dout          (write_data)
     );
 
-    logic [9:0] bram_addr;
     nbit_counter #(
         .N        (10)
     ) write_address_counter (
         .clk      (clk),
         .reset    (reset),
         .inc      (inc),
-        .dec      (0),
-        .count    (bram_addr)
+        .count    (write_address)
     );
     
     commandDecoder u_commandDecoder (
         .clk            (clk),
-        .rst            (rst),
+        .reset          (reset),
         .write_done     (write_done),
         .rx_ready       (rx_ready),
-        .op_done        (op_done),
-        .rx_data        (rx_data),
-        .bram_sel       (bram_sel),
-        .command_out    (command_out)
+        .op_done        (write_done),   //  Temporalmente conectado a write_done. Conectar a los otros done a medida que se instancien los otros módulos
+        .rx_data        (recv_data),
+        .bram_sel       (select_bram),
+        .command_out    (command_out) // Orden: Write, Read, Sum, Avg, Euc, Man, Dot
     );
 
     blk_mem_gen_0 BRAMA (
-        .clka(clk),    // input wire clka
-        .ena(1),      // input wire ena
-        .wea(wea),      // input wire [0 : 0] wea
-        .addra(bram_addr),  // input wire [9 : 0] addra
-        .dina(write_data),    // input wire [9 : 0] dina
-        .douta(),  // output wire [9 : 0] douta
-        .clkb(clk),    // input wire clkb
-        .enb(1),      // input wire enb
-        .web(web),      // input wire [0 : 0] web
-        .addrb(address),  // input wire [9 : 0] addrb
-        .dinb(0),    // input wire [9 : 0] dinb
-        .doutb(bram_a_dout)  // output wire [9 : 0] doutb
+        .clka(clk),                // input wire clka
+        .ena(1),                   // input wire ena
+        .wea(wea_a),               // input wire [0 : 0] wea
+        .addra(write_address),     // input wire [9 : 0] addra
+        .dina(write_data),         // input wire [9 : 0] dina
+        .douta(),                  // output wire [9 : 0] douta
+        .clkb(clk),                // input wire clkb
+        .enb(1),                   // input wire enb
+        .web(0),                   // input wire [0 : 0] web
+        .addrb(bram_a_read_addr),  // input wire [9 : 0] addrb
+        .dinb(10'd0),              // input wire [9 : 0] dinb
+        .doutb(bram_a_dout)        // output wire [9 : 0] doutb
     );
 
     blk_mem_gen_0 BRAMB (
-        .clka(clk),    // input wire clka
-        .ena(1),      // input wire ena
-        .wea(wea),      // input wire [0 : 0] wea
-        .addra(bram_addr),  // input wire [9 : 0] addra
-        .dina(write_data),    // input wire [9 : 0] dina
-        .douta(),  // output wire [9 : 0] douta
-        .clkb(clk),    // input wire clkb
-        .enb(1),      // input wire enb
-        .web(web),      // input wire [0 : 0] web
-        .addrb(address),  // input wire [9 : 0] addrb
-        .dinb(0),    // input wire [9 : 0] dinb
-        .doutb(bram_b_dout)  // output wire [9 : 0] doutb
+        .clka(clk),                 // input wire clka
+        .ena(1),                    // input wire ena
+        .wea(wea_b),                // input wire [0 : 0] wea
+        .addra(write_address),      // input wire [9 : 0] addra
+        .dina(write_data),          // input wire [9 : 0] dina
+        .douta(),                   // output wire [9 : 0] douta
+        .clkb(clk),                 // input wire clkb
+        .enb(1),                    // input wire enb
+        .web(0),                    // input wire [0 : 0] web
+        .addrb(bram_b_read_addr),   // input wire [9 : 0] addrb
+        .dinb(10'd0),               // input wire [9 : 0] dinb
+        .doutb(bram_b_dout)         // output wire [9 : 0] doutb
     );
 
 

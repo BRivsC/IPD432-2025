@@ -2,10 +2,10 @@
 
 module commandDecoder
 (
-	input 	logic clk, rst, write_done, rx_ready, op_done, 
+	input 	logic clk, reset, write_done, rx_ready, op_done, 
 	input 	logic [7:0] rx_data, 
 	output 	logic bram_sel, 
-	output 	logic [7:0] command_out );
+	output 	logic [6:0] command_out );
 // Codificación one-hot de comandos
 // Orden: Write, Read, Sum, Avg, Euc, Man, Dot
 
@@ -21,8 +21,10 @@ enum logic [12:0] {WAIT, STORE, DECODE, WRITE_A, WRITE_B, READ_A, READ_B, SUM, A
 
  //FSM state register:
  always_ff @(posedge clk)
-	if (rst) CurrentState <= WAIT;
+	if (reset) CurrentState <= WAIT;
 	else CurrentState <= NextState;
+
+assign command_out = {en_write, en_read, en_sum, en_avg, en_euc, en_man, en_dot};
 
  //FSM combinational logic:
  always_comb begin
@@ -83,10 +85,11 @@ enum logic [12:0] {WAIT, STORE, DECODE, WRITE_A, WRITE_B, READ_A, READ_B, SUM, A
             else NextState = DECODE;
 		end
 
+		default: NextState = WAIT;
 
 
 	endcase
 
-	assign command_out = {en_write, en_read, en_sum, en_avg, en_euc, en_man, en_dot};
+	
  end
 endmodule

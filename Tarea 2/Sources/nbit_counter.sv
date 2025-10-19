@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module nbit_counter #(parameter N=4)(
-     input  logic          clk, reset, inc, dec,
+     input  logic          clk, reset, inc,
      output logic [N-1:0]  count
 
     );
@@ -32,7 +32,7 @@ module nbit_counter #(parameter N=4)(
             count <= 'd0; //contador se reinicia
         else if (inc) //si señal inc es 1...
             count <= count + 1; //incrementa el contador
-        else if (dec) //si señal dec es 1...
-            count <= count - 1; //decrementa el contador
+        else 
+            count <= count; //mantiene el valor del contador
     end
 endmodule
