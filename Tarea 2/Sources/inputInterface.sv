@@ -2,14 +2,15 @@
 // Módulo de interfaz de entrada con memorias, controlador de escritura, decodificador de comandos y contador de direcciones.
 // Todo: Definir entradas y salidas
 //       Ver qué conexiones faltan desde etapa de operaciones
-//       Insertar módulo UART
+//       Insertar módulo UART | EDIT: UART se conecta desde afuera
 //       Conectar bien los bloques
 //       Hacer una testbench
 
 module inputInterface(
     input logic clk, reset, rx_ready,
-    input logic [7:0]rx_data,
-    output logic [9:0] doutb
+    input logic [7:0] rx_data,
+    input logic [9:0] bram_a_read_addr, bram_b_read_addr,
+    output logic [9:0] bram_a_dout, bram_b_dout
 
     );
 
@@ -62,10 +63,10 @@ module inputInterface(
         .web(web),      // input wire [0 : 0] web
         .addrb(address),  // input wire [9 : 0] addrb
         .dinb(0),    // input wire [9 : 0] dinb
-        .doutb()  // output wire [9 : 0] doutb
+        .doutb(bram_a_dout)  // output wire [9 : 0] doutb
     );
 
-        blk_mem_gen_0 BRAMB (
+    blk_mem_gen_0 BRAMB (
         .clka(clk),    // input wire clka
         .ena(1),      // input wire ena
         .wea(wea),      // input wire [0 : 0] wea
@@ -77,7 +78,7 @@ module inputInterface(
         .web(web),      // input wire [0 : 0] web
         .addrb(address),  // input wire [9 : 0] addrb
         .dinb(0),    // input wire [9 : 0] dinb
-        .doutb()  // output wire [9 : 0] doutb
+        .doutb(bram_b_dout)  // output wire [9 : 0] doutb
     );
 
 
