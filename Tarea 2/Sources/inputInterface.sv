@@ -47,13 +47,21 @@ module inputInterface(
         .count    (write_address)
     );
     
+    // Nota: op_code y bram_info vienen del byte recibido por rx_data
+    // Formato: [bram_sel(1 bit)][unused(4 bits)][op_code(3 bits)]
+    logic [2:0] opcode_in;
+    logic bram_info;
+    assign opcode_in = rx_data[2:0];
+    assign bram_info = rx_data[7];
     commandDecoder u_commandDecoder (
         .clk            (clk),
         .reset          (reset),
         .write_done     (write_done),
         .rx_ready       (rx_ready),
+        .op_code        (opcode_in),
+        .bram_info_in   (bram_info),
         .op_done        (write_done),   //  Temporalmente conectado a write_done. Conectar a los otros done a medida que se instancien los otros módulos
-        .rx_data        (recv_data),
+        //.rx_data        (recv_data),
         .bram_sel       (select_bram),
         .command_out    (command_out) // Orden: Write, Read, Sum, Avg, Euc, Man, Dot
     );

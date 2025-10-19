@@ -2,12 +2,16 @@
 
 module commandDecoder
 (
-	input 	logic clk, reset, write_done, rx_ready, op_done, 
-	input 	logic [7:0] rx_data, 
+	input 	logic clk, reset, write_done, rx_ready, op_done, bram_info_in,
+	//input 	logic [7:0] rx_data, 
+	input 	logic [2:0] op_code, 
 	output 	logic bram_sel, 
 	output 	logic [6:0] command_out );
 // Codificación one-hot de comandos
 // Orden: Write, Read, Sum, Avg, Euc, Man, Dot
+
+// Nota: op_code y bram_info vienen del byte recibido por rx_data
+// Formato: [bram_sel(1 bit)][unused(4 bits)][op_code(3 bits)]
 
  //Internal signals:-------------------------
 logic en_write, en_read, en_sum, en_avg, en_euc, en_man, en_dot;
@@ -46,10 +50,10 @@ assign command_out = {en_write, en_read, en_sum, en_avg, en_euc, en_man, en_dot}
 
 		DECODE: begin
 			//command_mem = rx_data;
-			case (rx_data[2:0])
+			case (op_code)
 				3'b001: begin // Write2dev
 					en_write = 1; 
-					bram_sel = rx_data[7]; // 0 para A, 1 para B. Este va hacia writeCtrl
+					bram_sel = bram_info_in; // 0 para A, 1 para B. Este va hacia writeCtrl
 					//NextState = WRITE; 
 				end
 				3'b010: begin // ReadVect
