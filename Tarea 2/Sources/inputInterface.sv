@@ -1,9 +1,6 @@
 `timescale 1ns / 1ps
 // Módulo de interfaz de entrada con memorias, controlador de escritura, decodificador de comandos y contador de direcciones.
-// Todo: Definir entradas y salidas
-//       Ver qué conexiones faltan desde etapa de operaciones
-//       Insertar módulo UART | EDIT: UART se conecta desde afuera
-//       Conectar bien los bloques
+// Todo: Ver qué conexiones faltan desde etapa de operaciones
 //       Hacer una testbench
 
 module inputInterface(
