@@ -30,18 +30,18 @@ module eucDist#(parameter NO_ELEMENTOS = 1024
     input logic clk,
     input logic reset,
     output logic op_done,
-    output logic [23:0]result
+    output logic [15:0]result
     );
     
     localparam counter_width = $clog2(NO_ELEMENTOS);
-    logic [36:0]aux;
+    logic [29:0]aux;
     logic [counter_width-1:0]n;
     logic conv_raiz;
-    logic [18:0]res_buff;
+    logic [15:0]res_buff;
     
     always_ff @(posedge clk)begin
         if(reset) begin
-            aux <= 37'b0;
+            aux <= 30'b0;
             n<= 0;
         end
         else if(enable) begin
@@ -55,7 +55,7 @@ module eucDist#(parameter NO_ELEMENTOS = 1024
             end
         end
         else begin
-            aux <= 37'b0;
+            aux <= 30'b0;
             n <= 0;
         end
     end
@@ -72,5 +72,5 @@ module eucDist#(parameter NO_ELEMENTOS = 1024
   .m_axis_dout_tvalid(op_done),            // output wire m_axis_dout_tvalid
   .m_axis_dout_tdata(res_buff)              // output wire [15 : 0] m_axis_dout_tdata
 );
-    assign result = {5'b00000 , res_buff[18:0]};
+    assign result = {1'b0 , res_buff[14:0]};
 endmodule

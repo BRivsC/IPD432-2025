@@ -34,7 +34,7 @@ module processingCore #(parameter NUM_ELEMENTOS = 1024)(
     logic [15:0]result_read;
     logic [15:0]result_sum;
     logic [15:0]result_avg;
-    logic [23:0]result_euc;
+    logic [15:0]result_euc;
     logic [23:0]result_man;
     logic [31:0]result_dot;
     
@@ -42,7 +42,7 @@ module processingCore #(parameter NUM_ELEMENTOS = 1024)(
         if(enables[0]) result = {16'h00 , result_read};
         else if(enables[1]) result = {16'h00 , result_sum};
         else if(enables[2]) result = {16'h00 , result_avg};
-        else if(enables[3]) result = {8'h0 , result_euc};
+        else if(enables[3]) result = {16'h00 , result_euc};
         else if(enables[4]) result = {8'h0 , result_man};
         else if(enables[5]) result = result_dot;
         else result = 32'h0000;
