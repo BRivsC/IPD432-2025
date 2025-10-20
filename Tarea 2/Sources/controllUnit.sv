@@ -290,7 +290,7 @@ module controllUnit #(parameter NUM_ELEMENTOS = 1024)(
                 
                 if(operation[4]) begin//euc dist
                     if(~tx_bussy) begin
-                        if(bt >= 3) NEXT_STATE = IDLE;
+                        if(bt >= 2) NEXT_STATE = IDLE;
                         else begin
                             bt = bt + 1;
                             tx_start = 1'b1;
