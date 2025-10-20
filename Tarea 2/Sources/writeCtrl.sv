@@ -7,8 +7,7 @@ module writeCtrl(
     output logic [9:0] dout
 
     );
-    
-    
+
     enum logic [6:0] {IDLE, WAIT_LSB, STORE_LSB, WAIT_MSB, STORE_MSB, WRITE_BRAM, WRITE_DONE} state, next_state;
     always_ff @(posedge clk) begin
         if(reset)
@@ -18,12 +17,9 @@ module writeCtrl(
     end
     
     logic update_bram_sel, bram_sel_mem, load_lsb, load_msb;
-    //logic [9:0] dout_reg;
     logic [7:0] data_lsb;
     logic [1:0] data_msb;
-    //assign data_msb = rx_data[1:0];
-    //assign data_lsb = rx_data[7:0];
-    
+
     always_comb begin
         next_state = state;
 
@@ -86,6 +82,9 @@ module writeCtrl(
         endcase
     end
     
+////////// Posible módulo: Write Data Register //////////
+// Recibe los datos de rx_data y los almacena en un registro de 10 bits
+// Controlado por las señales load_lsb y load_msb    
     // Registros para los 10 bits de datos
     // 8 menos significativos:
     always_ff @(posedge clk) begin
@@ -108,17 +107,6 @@ module writeCtrl(
 		end
 	end
 
-	//always_ff @(posedge clk) begin
-	//	if (reset) begin
-	//		dout_reg <= 0;
-	//	end else if (load_lsb) begin
-	//		dout_reg[7:0] <= data_lsb;
-	//	end else if (load_msb) begin
-	//		dout_reg[9:8] <= data_msb;
-	//	end else begin
-	//		dout_reg <= dout_reg;
-	//	end
-	//end
     
     // Registro para mantener la BRAM a escribir
     
