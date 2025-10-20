@@ -19,7 +19,7 @@ logic en_write, en_read, en_sum, en_avg, en_euc, en_man, en_dot;
  //Declarations:------------------------------
 
  //FSM states type:
-enum logic [12:0] {WAIT, STORE, DECODE, WRITE_A, WRITE_B, READ_A, READ_B, SUM, AVG, EUC, MAN, DOT} CurrentState, NextState;
+enum logic [1:0] {WAIT, DECODE} CurrentState, NextState;
 
  //Statements:--------------------------------
 

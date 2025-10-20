@@ -18,7 +18,12 @@ module writeCtrl(
     end
     
     logic update_bram_sel, bram_sel_mem, load_lsb, load_msb;
-    logic [9:0] dout_reg;
+    //logic [9:0] dout_reg;
+    logic [7:0] data_lsb;
+    logic [1:0] data_msb;
+    //assign data_msb = rx_data[1:0];
+    //assign data_lsb = rx_data[7:0];
+    
     always_comb begin
         next_state = state;
 
@@ -59,12 +64,13 @@ module writeCtrl(
             end
 
             STORE_MSB: begin
-                dout[9:8] = rx_data;
+                load_msb = 1;
                 next_state = WRITE_BRAM;
             end
 
             WRITE_BRAM: begin
-                dout = dout_reg;
+                //dout = dout_reg;
+                dout = {data_msb, data_lsb};
                 wea_a = ~bram_sel_mem; //  Escribir en BRAM A si bram_sel_mem es 0
                 wea_b = bram_sel_mem;  //  Escribir en BRAM B si bram_sel_mem es 1
                 next_state = WRITE_DONE;
@@ -80,19 +86,39 @@ module writeCtrl(
         endcase
     end
     
-    // Registro para los 10 bits de datos
-
-	always_ff @(posedge clk) begin
+    // Registros para los 10 bits de datos
+    // 8 menos significativos:
+    always_ff @(posedge clk) begin
 		if (reset) begin
-			dout_reg = 0;
+			data_lsb <= 0;
 		end else if (load_lsb) begin
-			dout_reg[7:0] = rx_data;
-		end else if (load_msb) begin
-			dout_reg[9:8] = rx_data;
+			data_lsb <= rx_data;
 		end else begin
-			dout_reg = dout_reg;
+			data_lsb <= data_lsb;
 		end
 	end
+    // 2 más significativos
+    always_ff @(posedge clk) begin
+		if (reset) begin
+			data_msb <= 0;
+		end else if (load_msb) begin
+			data_msb <= rx_data[1:0];
+		end else begin
+			data_msb <= data_msb;
+		end
+	end
+
+	//always_ff @(posedge clk) begin
+	//	if (reset) begin
+	//		dout_reg <= 0;
+	//	end else if (load_lsb) begin
+	//		dout_reg[7:0] <= data_lsb;
+	//	end else if (load_msb) begin
+	//		dout_reg[9:8] <= data_msb;
+	//	end else begin
+	//		dout_reg <= dout_reg;
+	//	end
+	//end
     
     // Registro para mantener la BRAM a escribir
     
