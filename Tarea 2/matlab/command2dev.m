@@ -43,15 +43,15 @@ switch operation
     case "EucDist"
         instruction = 0b00010000;
         write(port,instruction,"uint8");
-        vector = read(port, vector_size, "uint32");
+        vector = read(port, 1, "uint16");
     case "ManDist"
         instruction = 0b00100000;
         write(port,instruction,"uint8");
-        vector = read(port, vector_size, "uint32");
+        vector = read(port, 1, "uint32");
     case "DotProd"
         instruction = 0b01000000;
         write(port,instruction,"uint8");
-        vector = read(port, vector_size, "uint32");
+        vector = read(port, 1, "uint32");
 end
 
 % Close the serial port connection after operation

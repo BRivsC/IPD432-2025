@@ -28,7 +28,7 @@ vector = readmatrix(file);
 write(port,buffer,"uint8");
 
 %alternativa 1 envio
-write(port,vector);
+write(port,vector,"uint16");
 
 %alternativa 2 envio
 for i = 1:vector_size
