@@ -68,7 +68,7 @@ module eucDist#(parameter NO_ELEMENTOS = 1024
     raiz raiz_euc_dist (
   .aclk(clk),                                        // input wire aclk
   .s_axis_cartesian_tvalid(conv_raiz),  // input wire s_axis_cartesian_tvalid
-  .s_axis_cartesian_tdata(aux),    // input wire [23 : 0] s_axis_cartesian_tdata
+  .s_axis_cartesian_tdata({2'b00,aux}),    // input wire [23 : 0] s_axis_cartesian_tdata
   .m_axis_dout_tvalid(op_done),            // output wire m_axis_dout_tvalid
   .m_axis_dout_tdata(res_buff)              // output wire [15 : 0] m_axis_dout_tdata
 );
