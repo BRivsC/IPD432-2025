@@ -8,7 +8,7 @@ module txCtrl#(
     //input [6:0] command,    //  desde CommandDecoder
     input logic [5:0] enables,  // Formato: {dot, man, euc, avg, sum, read} desde CtrllUnit
     output logic tx_start,  register_result32, send_b0, send_b1, send_b2, send_b3,
-    output logic [9:0] dout,
+    output logic [9:0] dout
     
     );
     
