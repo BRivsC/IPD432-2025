@@ -2,7 +2,7 @@
 // Módulo de interfaz de salida con memorias, controlador de transmisión, y driver de 7 segmentos
 
 
-module outputDomain(
+module data_transmit_test(
     input logic clk, reset, op_done, 
     input logic [5:0] enables_in,
     input logic [31:0] result_data,

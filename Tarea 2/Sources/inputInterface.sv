@@ -1,7 +1,5 @@
 `timescale 1ns / 1ps
 // Módulo de interfaz de entrada con memorias, controlador de escritura, decodificador de comandos y contador de direcciones.
-// Todo: Ver qué conexiones faltan desde etapa de operaciones
-//       Hacer una testbench
 
 module inputInterface(
     input logic clk, reset, rx_ready, 
