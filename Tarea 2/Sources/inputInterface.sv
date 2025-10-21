@@ -35,7 +35,7 @@ module inputInterface(
         .dout          (write_data)
     );
 
-    nbit_counter #(
+    nbit_counter_inc #(
         .N        (10)
     ) write_address_counter (
         .clk      (clk),
