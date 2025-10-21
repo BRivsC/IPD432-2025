@@ -70,7 +70,7 @@ module controllUnit #(parameter NUM_ELEMENTOS = 1024)(
             web <= 1'b0;
             case(STATE)
                 IDLE: begin
-                    if(t >= 1) begin//teimpo que necesita la memoria para escribir tras acabar write.
+                    if(t >= 2) begin//teimpo que necesita la memoria para escribir tras acabar write.
                         ena <= 1'b0;
                         enb <= 1'b0;
                     end
