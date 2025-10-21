@@ -35,17 +35,15 @@ module driver_7_seg_en#(parameter N = 32, count_max = 3, clk_divider_count = 200
     // Concatenacion de numeros para rellenar por si es menor a 32 bits (8 segmentos)
     logic [31:0] data; //numero a tratar
 
-    if (enable == 0) 
-        assign data = 32'dFF_FF_FF_FF; //si enable es 0, apagar displays
+    
+    
+    
+    if (N == 32) 
+        assign data = BCD_in;    
     else 
-        if (N == 32) 
-            assign data = BCD_in;    
-        else 
-            assign data = {'d0,BCD_in};
-        
+        assign data = {'d0,BCD_in};
     
-    
-    
+
     logic clock_div ;
     
     
@@ -86,11 +84,19 @@ module driver_7_seg_en#(parameter N = 32, count_max = 3, clk_divider_count = 200
          .out(sevenSeg_in)
          );  
     
+    logic [6:0] sevenSeg;
     BCD_to_sevenSeg BCD_to_sevenSeg(    //conversor por digitos
         .BCD_in(sevenSeg_in),
-        .sevenSeg(segments)
+        .sevenSeg(sevenSeg)
         );
-        
+    
+    always_comb begin
+        if (enable) begin
+            segments = sevenSeg;
+        end else begin
+            segments = 7'b1111111; //apagar display si no está habilitado
+        end
+    end
         
     //***Segunda parte: mostrar un numero unico y escoger su display***
     

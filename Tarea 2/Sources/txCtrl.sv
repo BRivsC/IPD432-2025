@@ -4,10 +4,10 @@ module txCtrl#(
     parameter INTER_BYTE_DELAY = 1000000,   // ciclos de reloj de espera entre el envio de 2 bytes consecutivos
 	parameter WAIT_FOR_REGISTER_DELAY = 100 // tiempo de espera para iniciar la transmision luego de registrar el dato a enviar
 )(
-    input logic clk, reset, op_done, 
+    input logic clk, reset, op_done, tx_busy,
     //input [6:0] command,    //  desde CommandDecoder
     input logic [5:0] enables,  // Formato: {dot, man, euc, avg, sum, read} desde CtrllUnit
-    output logic tx_start,  register_result32, send_b0, send_b1, send_b2, send_b3,
+    output logic tx_start, tx_done, register_result32, send_b0, send_b1, send_b2, send_b3,
     output logic [9:0] dout
     
     );
@@ -117,7 +117,7 @@ module txCtrl#(
     end	
 
     //when clock ticks, update the state
-    always_ff @(posedge clock) begin
+    always_ff @(posedge clk) begin
     	if(reset)
     		state <= IDLE;
     	else
@@ -125,7 +125,7 @@ module txCtrl#(
 	end
 	
     // Timer to hold states for a certain period
-    always_ff @(posedge clock) begin
+    always_ff @(posedge clk) begin
         if(reset)
             hold_state_timer <= 0;
         else if(state != next_state)
