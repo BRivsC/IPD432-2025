@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-module nbit_counter #(parameter N=4)(
+module nbit_counter_inc #(parameter N=4)(
      input  logic          clk, reset, inc,
      output logic [N-1:0]  count
 
