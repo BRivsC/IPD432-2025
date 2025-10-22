@@ -21,17 +21,26 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-module nbit_counter_inc #(parameter N=4)(
+module nbit_counter_inc #(parameter N=10, MAX_COUNT = 1024)(
      input  logic          clk, reset, inc,
+     output logic          count_done,
      output logic [N-1:0]  count
 
     );
     always_ff @(posedge clk) begin //flip flop
     //se activa al pasar por el canto de subida del reloj
-        if (reset) //si señal reset es 1...
+        if (reset) begin //si señal reset es 1...
             count <= 'd0; //contador se reinicia
-        else if (inc) //si señal inc es 1...
-            count <= count + 1; //incrementa el contador
+            count_done <= 'd0;
+        end
+        else if (inc) begin //si señal inc es 1...
+            if (count == MAX_COUNT)
+                count <= count + 'd0; 
+                count_done <= 'd1; 
+        end else begin
+                count <= count + 'd1;
+                count_done <= 'd0
+        end
         else 
             count <= count; //mantiene el valor del contador
     end
