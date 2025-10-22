@@ -324,6 +324,8 @@ module controllUnit #(parameter NUM_ELEMENTOS = 1024)(
                     end
                 end
             end
+            
+            default: NEXT_STATE = IDLE;
         endcase
     end
 endmodule
