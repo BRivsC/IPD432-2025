@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module writeCtrl(
-    input logic clk, reset, rx_ready, en, bram_sel,
+    input logic clk, reset, rx_ready, en, bram_sel, count_done,
     input logic [7:0]rx_data,
     output logic write_done, inc, wea_a, wea_b,
     output logic [9:0] dout
@@ -32,7 +32,7 @@ module writeCtrl(
         dout = 0;
         write_done = 0;
         inc = 0;
-        wea_a = 0;
+        wea_a = 0;  
         wea_b = 0;
 
         case(state)
@@ -65,16 +65,22 @@ module writeCtrl(
             end
 
             WRITE_BRAM: begin
-                //dout = dout_reg;
                 dout = {data_msb, data_lsb};
                 wea_a = ~bram_sel_mem; //  Escribir en BRAM A si bram_sel_mem es 0
                 wea_b = bram_sel_mem;  //  Escribir en BRAM B si bram_sel_mem es 1
-                next_state = WRITE_DONE;
+                next_state = INC_ADDR;
+            end
+
+            INC_ADDR: begin
+                inc = 1;
+                if (count_done)
+                    next_state = WRITE_DONE;
+                else
+                    next_state = WAIT_LSB;
             end
 
             WRITE_DONE: begin
                 write_done = 1;
-                inc = 1;
                 next_state = IDLE;
             end
 
@@ -82,7 +88,6 @@ module writeCtrl(
         endcase
     end
     
-////////// Posible módulo: Write Data Register //////////
 // Recibe los datos de rx_data y los almacena en un registro de 10 bits
 // Controlado por las señales load_lsb y load_msb    
     // Registros para los 10 bits de datos
