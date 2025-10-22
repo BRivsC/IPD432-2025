@@ -3,7 +3,7 @@
 // Recibe mensajes por UART y muestra el valor registrado en los LEDs
 // También permite definir el address a mostrar con los switches
 
-module data_rcv_test(
+module data_rcv_test_wctrl_unit(
     input logic CLK100MHZ, CPU_RESETN, UART_RX_USB,
     input logic [9:0] SW,
     output logic UART_TX_USB,
@@ -36,6 +36,24 @@ module data_rcv_test(
     .bram_a_dout         (bram_a_dout),
     .bram_b_dout         (bram_b_dout)
 	);
+
+  inputInterface #(
+    .NUM_ELEMENTOS           (1024)
+) u_inputInterface (
+    ._domain_clk             (_domain_clk),
+    .reset                   (reset),
+    .rx_ready                (rx_ready),
+    .processor_domain_clk    (processor_domain_clk),
+    .begin_write             (begin_write),
+    .rx_data                 (rx_data),
+    .read_mem_dir            (read_mem_dir),
+    .write_done              (write_done),
+    .command_ready           (command_ready),
+    .command                 (command),
+    //  Sigue formato para MainCtrl (dir memoria 0A, 1B, write, read, sum, avg, euc dist, man dist y dot prod)
+    .data_a                  (data_a),
+    .data_b                  (data_b)
+);
 
     uart_basic #(
 		.CLK_FREQUENCY(100_000_000), // reloj base de entrada

@@ -7,11 +7,12 @@ module inputInterface_tb;
     logic reset;
     logic rx_ready;
     logic begin_write;
+    logic op_done;
     logic [7:0] rx_data;
     logic [9:0] read_mem_dir;
     logic [7:0] command;
-    logic [9:0] bram_a_dout;
-    logic [9:0] bram_b_dout;
+    logic [9:0] data_a;
+    logic [9:0] data_b;
     localparam NUM_ELEMENTOS = 2;
     // Instancia del DUT
 
@@ -28,6 +29,7 @@ module inputInterface_tb;
         .write_done              (write_done),
         .command_ready           (command_ready),
         .command                 (command), //  Sigue formato para MainCtrl (dir memoria 0A, 1B, write, read, sum, avg, euc dist, man dist y dot prod)
+        .op_done                 (op_done),
         .data_a                  (data_a),
         .data_b                  (data_b)
     );
@@ -44,7 +46,7 @@ module inputInterface_tb;
         .command              (command),            //dir memoria 0A, 1B, dot prod, man dist, euc dist, avg, sum, read y write. En ese orden
         .process_ctrl         (),       //seña para varios controles del processing core
         .read_enable          (),        //enable para las memorias para leer
-        .begin_transmision    (),  //señal para iniciar la transmision cuando hay un resultado listo
+        .begin_transmision    (op_done),  //señal para iniciar la transmision cuando hay un resultado listo
         .begin_write          (begin_write),        //señal para empezar la escritura
         .enables              (),            //arreglo de enables para las distintas operaciones. Mismo orden que command
         //direccion de memoria a leer

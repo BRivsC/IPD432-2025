@@ -17,9 +17,9 @@ module inputInterface#(
     logic [6:0] command_out;
     logic [7:0] recv_data;
     logic count_done;
-    logic wea_a, wea_b, select_bram;
+    logic wea_a, wea_b, bram_sel;
     assign recv_data = rx_data;
-    assign command = {select_bram, command_out}; 
+    assign command = {bram_sel, command_out}; 
 
 
     writeCtrl u_writeCtrl (
@@ -27,7 +27,7 @@ module inputInterface#(
         .reset         (reset),
         .rx_ready      (rx_ready),
         .en            (begin_write),   
-        .bram_sel      (select_bram),
+        .bram_sel      (bram_sel),
         .rx_data       (recv_data),
         .write_done    (write_done),
         .count_done    (count_done),
@@ -50,18 +50,18 @@ module inputInterface#(
     
     // Nota: op_code y bram_info vienen del byte recibido por rx_data
     // Formato: [bram_sel(1 bit)][unused(4 bits)][op_code(3 bits)]
-    logic [2:0] opcode_in;
+    logic [2:0] op_code_in;
     logic bram_info_in;
-    assign opcode_in = rx_data[2:0];
+    assign op_code_in = rx_data[2:0];
     assign bram_info_in = rx_data[7];
     //commandDecoder u_commandDecoder (
     //    .clk            (input_domain_clk),
     //    .reset          (reset),
     //    .rx_ready       (rx_ready),
-    //    .op_code_in     (opcode_in),
+    //    .op_code_in     (op_code_in),
     //    .bram_info_in   (bram_info_in),
     //    .op_done        (write_done),   //  Temporalmente conectado a write_done. Conectar a los otros done a medida que se instancien los otros módulos
-    //    .bram_sel       (select_bram),
+    //    .bram_sel       (bram_sel),
     //    .command_out    (command_out) // Orden: Write, Read, Sum, Avg, Euc, Man, Dot
     //);
 
@@ -69,7 +69,7 @@ module inputInterface#(
         .clk              (input_domain_clk),
         .reset            (reset),
         .rx_ready         (rx_ready),
-        .op_done          (op_done || write_done),  
+        .op_done          (op_done || write_done),  // Se reinicia mientras se manda un dato (conectar op_done a begin_transmision)
         .bram_info_in     (bram_info_in),
         .op_code_in       (op_code_in),
         .bram_sel         (bram_sel),
