@@ -6,7 +6,9 @@ module commandDecoder
 	//input 	logic [7:0] rx_data, 
 	input 	logic [2:0] op_code, 
 	output 	logic bram_sel, 
-	output 	logic [6:0] command_out );
+	output 	logic [6:0] command_out,
+	output 	logic command_ready
+	 );
 // Codificación one-hot de comandos
 // Orden: Write, Read, Sum, Avg, Euc, Man, Dot
 
@@ -41,6 +43,7 @@ assign command_out = {en_write, en_read, en_sum, en_avg, en_euc, en_man, en_dot}
 	en_man   = 0;
 	en_dot   = 0;
 	bram_sel = 0;
+	command_ready = 0;
 
 	case (CurrentState)
 		WAIT: begin
@@ -49,36 +52,30 @@ assign command_out = {en_write, en_read, en_sum, en_avg, en_euc, en_man, en_dot}
 		end
 
 		DECODE: begin
+			command_ready = 1;
 			//command_mem = rx_data;
 			case (op_code)
 				3'b001: begin // Write2dev
 					en_write = 1; 
 					bram_sel = bram_info_in; // 0 para A, 1 para B. Este va hacia writeCtrl
-					//NextState = WRITE; 
 				end
 				3'b010: begin // ReadVect
 					en_read  = 1; 
-					//NextState = READ;  
 				end
 				3'b011: begin // SumVect
 					en_sum   = 1; 
-					//NextState = SUM;     
 				end
 				3'b100: begin // AvgVect
 					en_avg   = 1; 
-					//NextState = AVG;     
 				end
 				3'b101: begin // EucDist
 					en_euc   = 1; 
-					//NextState = EUC;     
 				end
 				3'b110: begin // ManDist
 					en_man   = 1; 
-					//NextState = MAN;     
 				end
 				3'b111: begin // DotProd
 					en_dot   = 1;
-					//NextState = DOT;
 				end
 				default: begin
 					NextState = WAIT;
