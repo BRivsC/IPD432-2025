@@ -1,7 +1,9 @@
 `timescale 1ns / 1ps
 // Módulo de interfaz de entrada con memorias, controlador de escritura, decodificador de comandos y contador de direcciones.
 
-module inputInterface(
+module inputInterface#(
+    parameter NUM_ELEMENTOS = 1024
+)(
     input logic clk, reset, rx_ready, 
     input logic [7:0] rx_data,
     input logic [9:0] bram_a_read_addr, bram_b_read_addr,
@@ -13,6 +15,7 @@ module inputInterface(
     logic [9:0] write_address;
     logic [6:0] command_out;
     logic [7:0] recv_data;
+    logic count_done;
     logic wea_a, wea_b, en_write, select_bram;
     assign recv_data = rx_data;
     assign en_write = command_out[0]; //  en_write desde commandDecoder
@@ -27,6 +30,7 @@ module inputInterface(
         .bram_sel      (select_bram),
         .rx_data       (recv_data),
         .write_done    (write_done),
+        .count_done    (count_done),
         .inc           (inc),
         .wea_a         (wea_a),
         .wea_b         (wea_b),
@@ -34,29 +38,29 @@ module inputInterface(
     );
 
     nbit_counter_inc #(
-        .N        (10)
+        .N        (10),
+        .MAX_COUNT(NUM_ELEMENTOS)
     ) write_address_counter (
         .clk      (clk),
         .reset    (reset),
         .inc      (inc),
-        .count    (write_address)
+        .count    (write_address),
+        .count_done (count_done)
     );
     
     // Nota: op_code y bram_info vienen del byte recibido por rx_data
     // Formato: [bram_sel(1 bit)][unused(4 bits)][op_code(3 bits)]
     logic [2:0] opcode_in;
-    logic bram_info;
+    logic bram_info_in;
     assign opcode_in = rx_data[2:0];
-    assign bram_info = rx_data[7];
+    assign bram_info_in = rx_data[7];
     commandDecoder u_commandDecoder (
         .clk            (clk),
         .reset          (reset),
-        .write_done     (write_done),
         .rx_ready       (rx_ready),
-        .op_code        (opcode_in),
-        .bram_info_in   (bram_info),
+        .op_code_in     (opcode_in),
+        .bram_info_in   (bram_info_in),
         .op_done        (write_done),   //  Temporalmente conectado a write_done. Conectar a los otros done a medida que se instancien los otros módulos
-        //.rx_data        (recv_data),
         .bram_sel       (select_bram),
         .command_out    (command_out) // Orden: Write, Read, Sum, Avg, Euc, Man, Dot
     );
@@ -93,4 +97,3 @@ module inputInterface(
 
 
 endmodule
-

@@ -5,11 +5,11 @@ module commandDecoder
 	input 	logic clk, reset, rx_ready, op_done, bram_info_in,
 	input 	logic [2:0] op_code_in, 
 	output 	logic bram_sel, 
-	output 	logic [6:0] command_out,
+	output 	logic [6:0] command_out, // {en_dot, en_man, en_euc, en_avg, en_sum, en_read, en_write}
 	output 	logic command_ready
 	 );
 // Codificación one-hot de comandos
-// Orden: Write, Read, Sum, Avg, Euc, Man, Dot
+
 
 // Nota: op_code_in y bram_info vienen del byte recibido por rx_data
 // Formato: [bram_sel(1 bit)][unused(4 bits)][op_code_in(3 bits)]

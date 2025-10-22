@@ -8,7 +8,7 @@ module writeCtrl(
 
     );
 
-    enum logic [6:0] {IDLE, WAIT_LSB, STORE_LSB, WAIT_MSB, STORE_MSB, WRITE_BRAM, WRITE_DONE} state, next_state;
+    enum logic [8:0] {IDLE, WAIT_LSB, STORE_LSB, WAIT_MSB, STORE_MSB, WRITE_BRAM, INC_ADDR, CHECK_COUNTER, WRITE_DONE} state, next_state;
     always_ff @(posedge clk) begin
         if(reset)
             state <= IDLE;
@@ -73,6 +73,10 @@ module writeCtrl(
 
             INC_ADDR: begin
                 inc = 1;
+                next_state = CHECK_COUNTER;
+            end
+
+            CHECK_COUNTER: begin
                 if (count_done)
                     next_state = WRITE_DONE;
                 else
