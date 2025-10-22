@@ -21,7 +21,7 @@ module txCtrl#(
         //default assignments
         next_state = state;
 		tx_start = 0;
-        tx_done = 0;
+        tx_sent = 0;
         register_result32 = 0;
 		send_b0 = 0;
         send_b1 = 0;
@@ -106,7 +106,7 @@ module txCtrl#(
                         end
 
             TX_DONE: begin
-                            tx_done = 1;
+                            tx_sent = 1;
                             next_state = IDLE;
             end
             
