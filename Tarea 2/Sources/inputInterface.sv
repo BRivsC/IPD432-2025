@@ -4,7 +4,7 @@
 module inputInterface#(
     parameter NUM_ELEMENTOS = 1024
 )(
-    input logic input_domain_clk, processor_domain_clk, reset, rx_ready,  begin_write,
+    input logic input_domain_clk, processor_domain_clk, reset, rx_ready, begin_write, op_done,
     input logic [7:0] rx_data,
     input logic [9:0] read_mem_dir,
     output logic write_done, command_ready,
@@ -54,15 +54,27 @@ module inputInterface#(
     logic bram_info_in;
     assign opcode_in = rx_data[2:0];
     assign bram_info_in = rx_data[7];
+    //commandDecoder u_commandDecoder (
+    //    .clk            (input_domain_clk),
+    //    .reset          (reset),
+    //    .rx_ready       (rx_ready),
+    //    .op_code_in     (opcode_in),
+    //    .bram_info_in   (bram_info_in),
+    //    .op_done        (write_done),   //  Temporalmente conectado a write_done. Conectar a los otros done a medida que se instancien los otros módulos
+    //    .bram_sel       (select_bram),
+    //    .command_out    (command_out) // Orden: Write, Read, Sum, Avg, Euc, Man, Dot
+    //);
+
     commandDecoder u_commandDecoder (
-        .clk            (input_domain_clk),
-        .reset          (reset),
-        .rx_ready       (rx_ready),
-        .op_code_in     (opcode_in),
-        .bram_info_in   (bram_info_in),
-        .op_done        (write_done),   //  Temporalmente conectado a write_done. Conectar a los otros done a medida que se instancien los otros módulos
-        .bram_sel       (select_bram),
-        .command_out    (command_out) // Orden: Write, Read, Sum, Avg, Euc, Man, Dot
+        .clk              (input_domain_clk),
+        .reset            (reset),
+        .rx_ready         (rx_ready),
+        .op_done          (op_done || write_done),  
+        .bram_info_in     (bram_info_in),
+        .op_code_in       (op_code_in),
+        .bram_sel         (bram_sel),
+        .command_out      (command_out), // {en_dot, en_man, en_euc, en_avg, en_sum, en_read, en_write}
+        .command_ready    (command_ready)
     );
 
     blk_mem_gen_0 BRAMA (
