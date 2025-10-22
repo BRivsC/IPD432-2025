@@ -4,7 +4,7 @@
 module inputInterface#(
     parameter NUM_ELEMENTOS = 1024
 )(
-    input logic input_domain_clk, reset, rx_ready, processor_domain_clk, begin_write,
+    input logic input_domain_clk, processor_domain_clk, reset, rx_ready,  begin_write,
     input logic [7:0] rx_data,
     input logic [9:0] read_mem_dir,
     output logic write_done, command_ready,
