@@ -2,7 +2,7 @@
 
 module commandDecoder
 (
-	input 	logic clk, reset, write_done, rx_ready, op_done, bram_info_in,
+	input 	logic clk, reset, rx_ready, op_done, bram_info_in,
 	//input 	logic [7:0] rx_data, 
 	input 	logic [2:0] op_code, 
 	output 	logic bram_sel, 
@@ -82,7 +82,7 @@ assign command_out = {en_write, en_read, en_sum, en_avg, en_euc, en_man, en_dot}
 				end
 			endcase
 
-            if (op_done||write_done) NextState = WAIT;  
+            if (op_done) NextState = WAIT;  
             else NextState = DECODE;
 		end
 
