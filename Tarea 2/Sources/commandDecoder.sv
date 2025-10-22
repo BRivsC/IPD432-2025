@@ -30,7 +30,7 @@ enum logic [1:0] {WAIT, DECODE} CurrentState, NextState;
 	if (reset) CurrentState <= WAIT;
 	else CurrentState <= NextState;
 
-assign command_out = {en_write, en_read, en_sum, en_avg, en_euc, en_man, en_dot};
+assign command_out = {en_dot, en_man, en_euc, en_avg, en_sum, en_read, en_write};
 
  //FSM combinational logic:
  always_comb begin

@@ -15,7 +15,7 @@ module inputInterface(
     logic [7:0] recv_data;
     logic wea_a, wea_b, en_write, select_bram;
     assign recv_data = rx_data;
-    assign en_write = command_out[6]; //  en_write desde commandDecoder
+    assign en_write = command_out[0]; //  en_write desde commandDecoder
     assign command = {select_bram, command_out}; 
 
 
