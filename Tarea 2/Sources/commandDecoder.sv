@@ -61,6 +61,7 @@ assign command_out = {en_write, en_read, en_sum, en_avg, en_euc, en_man, en_dot}
 				end
 				3'b010: begin // ReadVect
 					en_read  = 1; 
+					bram_sel = bram_info_in;
 				end
 				3'b011: begin // SumVect
 					en_sum   = 1; 
