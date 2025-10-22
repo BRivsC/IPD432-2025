@@ -17,9 +17,8 @@ module inputInterface#(
     logic [6:0] command_out;
     logic [7:0] recv_data;
     logic count_done;
-    logic wea_a, wea_b, en_write, select_bram;
+    logic wea_a, wea_b, select_bram;
     assign recv_data = rx_data;
-    assign en_write = command_out[0]; //  en_write desde commandDecoder
     assign command = {select_bram, command_out}; 
 
 
@@ -27,7 +26,7 @@ module inputInterface#(
         .clk           (input_domain_clk),
         .reset         (reset),
         .rx_ready      (rx_ready),
-        .en            (en_write),   
+        .en            (begin_write),   
         .bram_sel      (select_bram),
         .rx_data       (recv_data),
         .write_done    (write_done),
