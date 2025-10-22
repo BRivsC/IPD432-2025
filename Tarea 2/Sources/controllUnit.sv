@@ -149,10 +149,7 @@ module controllUnit #(parameter NUM_ELEMENTOS = 1024)(
                 //enb = 1'b0;
                 if(command_ready)begin
                     counter_next = 11'b0;
-                    if(command[0]) begin
-                        NEXT_STATE = WRITE;
-                        begin_write = 1'b1;
-                    end
+                    if(command[0]) NEXT_STATE = WRITE;
                     else if(command[1]) NEXT_STATE = READ;
                     else if(command[2]) NEXT_STATE = SUM;
                     else if(command[3]) NEXT_STATE = AVG;
@@ -163,7 +160,7 @@ module controllUnit #(parameter NUM_ELEMENTOS = 1024)(
             end
             
             WRITE: begin//cambiar a realizar operacioness de estructura cada 2 rx_ready
-                
+                begin_write = 1'b1;
                 if(write_done) NEXT_STATE = IDLE;
 //                if(write_done)begin
 //                    read_block = 1'b0;
