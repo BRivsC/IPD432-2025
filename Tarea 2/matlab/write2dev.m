@@ -19,9 +19,9 @@ port.FlowControl = "none";
 flush(port,"input");
 
 if BRAMX == "BRAMA"
-    buffer = 0b01000000;
+    buffer = 0b00000001;
 else
-    buffer = 0b11000000;
+    buffer = 0b10000001;
 end
 
 vector = readmatrix(file);

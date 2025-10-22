@@ -33,23 +33,23 @@ switch operation
         % Read the vector data from the specified BRAM
         vector = read(port, vector_size, "uint16");
     case "SumVec"
-        instruction = 0b00000100;
+        instruction = 0b00000011;
         write(port,instruction,"uint8");
         vector = read(port, vector_size, "uint16");
     case "AvgVec"
-        instruction = 0b00001000;
+        instruction = 0b00000100;
         write(port,instruction,"uint8");
         vector = read(port, vector_size, "uint16");
     case "EucDist"
-        instruction = 0b00010000;
+        instruction = 0b00000101;
         write(port,instruction,"uint8");
         vector = read(port, 1, "uint16");
     case "ManDist"
-        instruction = 0b00100000;
+        instruction = 0b00000110;
         write(port,instruction,"uint8");
         vector = read(port, 1, "uint32");
     case "DotProd"
-        instruction = 0b01000000;
+        instruction = 0b00000111;
         write(port,instruction,"uint8");
         vector = read(port, 1, "uint32");
 end
