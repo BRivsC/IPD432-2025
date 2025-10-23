@@ -76,7 +76,7 @@ module processingCore #(parameter NUM_ELEMENTOS = 1024)(
     .result(result_avg)
     );
     
-    eucDist #(.NO_ELEMENTOS(NUM_ELEMENTOS))euc(
+    eucDist #(.NUM_ELEMENTOS(NUM_ELEMENTOS))euc(
     .data_A(data_A),
     .data_B(data_B),
     .enable(enables[3]),

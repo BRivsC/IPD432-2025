@@ -185,7 +185,7 @@ module controllUnit #(parameter NUM_ELEMENTOS = 1024)(
                 enables = 6'b000001;
                 mem_dir = counter;
                 process_ctrl = ~operation[7];
-                if(t >= 4) begin
+                if(t >= 3) begin
                     NEXT_STATE = SENDING;
                     begin_transmision = 1'b1;
                 end
@@ -198,7 +198,7 @@ module controllUnit #(parameter NUM_ELEMENTOS = 1024)(
                 enables = 6'b000010;
                 read_enable = 1'b1;
                 mem_dir = counter;
-                if(t >= 4) begin
+                if(t >= 3) begin
                     NEXT_STATE = SENDING;
                     begin_transmision = 1'b1;
                 end
@@ -211,7 +211,7 @@ module controllUnit #(parameter NUM_ELEMENTOS = 1024)(
                 enables = 6'b000100;
                 read_enable = 1'b1;
                 mem_dir = counter;
-                if(t >= 4) begin
+                if(t >= 3) begin
                     NEXT_STATE = SENDING;
                     begin_transmision = 1'b1;
                 end

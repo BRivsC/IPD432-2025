@@ -21,7 +21,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module eucDist#(parameter NO_ELEMENTOS = 1024
+module eucDist#(parameter NUM_ELEMENTOS = 1024
     )(
     input logic [15:0]data_A,
     input logic [15:0]data_B,
@@ -33,9 +33,9 @@ module eucDist#(parameter NO_ELEMENTOS = 1024
     output logic [15:0]result
     );
     
-    localparam counter_width = $clog2(NO_ELEMENTOS);
+    localparam counter_width = $clog2(NUM_ELEMENTOS);
     logic [29:0]aux;
-    logic [counter_width-1:0]n;
+    logic [counter_width:0]n;
     logic conv_raiz;
     logic [15:0]res_buff;
     
@@ -61,7 +61,7 @@ module eucDist#(parameter NO_ELEMENTOS = 1024
     end
     
     always_comb begin
-        if(n>=NO_ELEMENTOS) conv_raiz = 1'b1;
+        if(n>=NUM_ELEMENTOS) conv_raiz = 1'b1;
         else conv_raiz = 1'b0;
     end
     
