@@ -63,14 +63,14 @@ module top_module #(parameter NUM_ELEMENTOS = 1024)(
         .clk(clk_input),
         .rst(1'b0),
         .PB(~resetN),
-        .PB_pressed_pulse(reset_input)
+        .PB_pressed_status(reset_input)
     );
     
     PB_Debouncer reset_proc(
-        .clk(clk_input),
+        .clk(clk_process),
         .rst(1'b0),
         .PB(~resetN),
-        .PB_pressed_pulse(reset_process)
+        .PB_pressed_status(reset_process)
     );
     
     clk_wiz_0 instance_name
@@ -155,8 +155,8 @@ module top_module #(parameter NUM_ELEMENTOS = 1024)(
     
     
 //    outputInterface u_outputInterface (
-//        .clk                  (clk_100Mhz),
-//        .reset                (reset),
+//        .clk                  (clk_output),
+//        .reset                (reset_input),
 //        .send_b0              (send_b0),
 //        .send_b1              (send_b1),
 //        .send_b2              (send_b2),
