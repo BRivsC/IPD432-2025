@@ -31,13 +31,13 @@ write(port,buffer,"uint8");
 write(port,vector,"uint16");
 
 %alternativa 2 envio
-for i = 1:vector_size
-    buffer_1 = mod(vector(i),0xFF);
-    buffer_2 = vector(i)/0xFF;
-    write(port, buffer_1, "uint8");
-    write(port, buffer_2, "uint8");
-    
-end
+%for i = 1:vector_size
+%    buffer_1 = mod(vector(i),0xFF);
+%    buffer_2 = vector(i)/0xFF;
+%    write(port, buffer_1, "uint8");
+%    write(port, buffer_2, "uint8");
+%    
+%end
 
 clear port
 end
