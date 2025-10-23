@@ -6,7 +6,7 @@ module outputInterface #(
     parameter WAIT_FOR_REGISTER_DELAY = 100 // tiempo de espera para iniciar la transmision luego de registrar el dato a enviar
 )(
     input logic clk, reset, begin_transmission, tx_busy,
-    input logic [5:0] enables_in,
+    input logic [5:0] enables_in,    //  {dot, man, euc, avg, sum, read} desde CtrllUnit
     input logic [31:0] result_data,
     
     output logic       tx_start,  tx_sent,

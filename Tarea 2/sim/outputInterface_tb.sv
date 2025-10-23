@@ -7,7 +7,7 @@ module outputInterface_tb;
     logic reset;
     logic begin_transmission;
     logic tx_busy;
-    logic [5:0] enables_in;
+    logic [5:0] enables_in; //  {dot, man, euc, avg, sum, read} desde CtrllUnit
     logic [31:0] result_data;
     logic tx_start;
     logic tx_sent;
