@@ -2,17 +2,17 @@
 // Módulo de interfaz de salida con memorias, controlador de transmisión, y driver de 7 segmentos
 
 module outputInterface(
-    input logic clk, reset, begin_transmission, 
+    input logic clk, reset, begin_transmission, tx_busy,
     input logic [5:0] enables_in,
     input logic [31:0] result_data,
     
-    output logic       tx_start, tx_busy, tx_sent,
+    output logic       tx_start,  tx_sent,
     output logic       CA, CB, CC, CD, CE, CF, CG,
     output logic [7:0] tx_data,
     output logic [7:0] AN
     );
 
-    logic tx_start, register_result32, send_b0, send_b1, send_b2, send_b3;
+    logic register_result32, send_b0, send_b1, send_b2, send_b3;
     logic [7:0] dout;
 
     logic [5:0] enables;
@@ -21,28 +21,27 @@ module outputInterface(
     logic [31:0] result_data_in;
     assign result_data_in = result_data;
     
-
     txCtrl #(
-        .INTER_BYTE_DELAY           (1000000),// ciclos de reloj de espera entre el envio de 2 bytes consecutivos
-    	    // tiempo de espera para iniciar la transmision luego de registrar el dato a enviar
+        .INTER_BYTE_DELAY           (1000000),
         .WAIT_FOR_REGISTER_DELAY    (100)
     ) u_txCtrl (
         .clk                        (clk),
         .reset                      (reset),
         .begin_transmission         (begin_transmission),
         .tx_busy                    (tx_busy),
-        .enables                    (enables),// Formato: {dot, man, euc, avg, sum, read} desde CtrllUnit
+        .enables                    (enables), // Formato: {dot, man, euc, avg, sum, read} desde CtrllUnit
         .tx_start                   (tx_start),
+        .tx_sent                    (tx_sent),
         .register_result32          (register_result32),
         .send_b0                    (send_b0),
         .send_b1                    (send_b1),
         .send_b2                    (send_b2),
-        .send_b3                    (send_b3),
-        .dout                       (dout)
+        .send_b3                    (send_b3)
     );
 
+
     logic [31:0] bcd_data;
-    outputInterface u_outputInterface (
+    byteHandler u_byteHandler (
         .clk                  (clk),
         .reset                (reset),
         .send_b0              (send_b0),
@@ -50,13 +49,12 @@ module outputInterface(
         .send_b2              (send_b2),
         .send_b3              (send_b3),
         .register_result32    (register_result32),
+        .enables              (enables_in),
         .result_data          (result_data_in),
+        .en_disp              (en_disp),
         .tx_data              (tx_data),
         .bcd_out              (bcd_data)
     );
-
-    logic enable_display;
-    assign enable_display = enables[3]||enables[4]||enables[5]; //activar display solo para avg, euclidea o manhattan
 
     driver_7_seg_en #(
         .N                    (32),
@@ -65,7 +63,7 @@ module outputInterface(
     ) u_driver_7_seg_en (
         .clock                (clk),
         .reset                (reset),
-        .enable               (enable_display),
+        .enable               (en_disp),
         .BCD_in               (bcd_data),
         .segments             ({CA, CB, CC, CD, CE, CF, CG}),
         .anodos               (AN)// {AN7, AN6, AN5, AN4, AN3, AN2, AN1, AN0}
