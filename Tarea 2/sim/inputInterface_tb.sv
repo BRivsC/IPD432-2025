@@ -86,13 +86,6 @@ module inputInterface_tb;
         rx_ready = 1;
         #10 rx_ready = 0;
 
-        // Paso 3: Definir read_mem_dir en 00_0000_0001
-        //#10 read_mem_dir = 10'b00_0000_0001;
-
-        // Paso 4: Instrucción de escritura a la dirección 1 (rx_data = 1000_0001)
-        //#10 rx_data = 8'b1000_0001;
-        //rx_ready = 1;
-        //#10 rx_ready = 0;
 
         // Paso 5: Otros 3 mensajes con datos cualesquiera
         #20 rx_data = 8'b0011_1100;
@@ -107,39 +100,37 @@ module inputInterface_tb;
         rx_ready = 1;
         #10 rx_ready = 0;
 
-        // 6 mensajes más con datos cualesquiera
-        #20 rx_data = 8'b1110_0001;
+      // // 6 mensajes más con datos cualesquiera
+      // #20 rx_data = 8'b1110_0001;
+      // rx_ready = 1;
+      // #10 rx_ready = 0;
+
+      // #20 rx_data = 8'b1001_0110;
+      // rx_ready = 1;
+      // #10 rx_ready = 0;
+
+      // #20 rx_data = 8'b0110_1001;
+      // rx_ready = 1;
+      // #10 rx_ready = 0;
+
+      // #20 rx_data = 8'b0011_1100;
+      // rx_ready = 1;
+      // #10 rx_ready = 0;
+
+      // #20 rx_data = 8'b1100_0011;
+      // rx_ready = 1;
+      // #10 rx_ready = 0;
+
+      // //#20 rx_data = 8'b0001_1110;
+      // //rx_ready = 1;
+      // #10 //rx_ready = 0;
+
+
+        // Nuevo: Mandar comando de lectura
+        #30 rx_data = 8'b1000_0010; // bram_sel = 0, op_code = 010 (ReadVect)
         rx_ready = 1;
         #10 rx_ready = 0;
-
-        #20 rx_data = 8'b1001_0110;
-        rx_ready = 1;
-        #10 rx_ready = 0;
-
-        #20 rx_data = 8'b0110_1001;
-        rx_ready = 1;
-        #10 rx_ready = 0;
-
-        #20 rx_data = 8'b0011_1100;
-        rx_ready = 1;
-        #10 rx_ready = 0;
-
-        #20 rx_data = 8'b1100_0011;
-        rx_ready = 1;
-        #10 rx_ready = 0;
-
-        #20 rx_data = 8'b0001_1110;
-        rx_ready = 1;
-        #10 rx_ready = 0;
-
-        // Paso 6: Definir read_mem_dir en 00_0000_0001
-        #10 read_mem_dir = 10'b00_0000_0001;
-
-        // Para ver pq se borra la bram
-        #100 rx_data = 8'b0000_0001;
-        rx_ready = 1;
-        #10 rx_ready = 0;
-
+     
         // Finalizar simulación
         #50 $finish;
     end
