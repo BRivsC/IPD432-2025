@@ -1,7 +1,10 @@
 `timescale 1ns / 1ps
 // Módulo de interfaz de salida con memorias, controlador de transmisión, y driver de 7 segmentos
 
-module outputInterface(
+module outputInterface #(
+    parameter INTER_BYTE_DELAY = 1000000,   // ciclos de reloj de espera entre el envio de 2 bytes consecutivos
+    parameter WAIT_FOR_REGISTER_DELAY = 100 // tiempo de espera para iniciar la transmision luego de registrar el dato a enviar
+)(
     input logic clk, reset, begin_transmission, tx_busy,
     input logic [5:0] enables_in,
     input logic [31:0] result_data,
@@ -22,8 +25,8 @@ module outputInterface(
     assign result_data_in = result_data;
     
     txCtrl #(
-        .INTER_BYTE_DELAY           (1000000),
-        .WAIT_FOR_REGISTER_DELAY    (100)
+        .INTER_BYTE_DELAY           (INTER_BYTE_DELAY),
+        .WAIT_FOR_REGISTER_DELAY    (WAIT_FOR_REGISTER_DELAY)
     ) u_txCtrl (
         .clk                        (clk),
         .reset                      (reset),
