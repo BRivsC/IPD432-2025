@@ -132,7 +132,7 @@ module inputInterface_tb;
         #10 rx_ready = 0;
      
         // Finalizar simulación
-        #50 $finish;
+        #100 $finish;
     end
 
 
