@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 // Módulo de interfaz de salida con memorias, controlador de transmisión, y driver de 7 segmentos
 
-module outputDomain(
+module outputInterface(
     input logic clk, reset, begin_transmission, 
     input logic [5:0] enables_in,
     input logic [31:0] result_data,

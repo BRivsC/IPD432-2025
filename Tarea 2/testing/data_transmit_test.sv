@@ -41,7 +41,7 @@ module data_transmit_test(
     );
 
     logic [31:0] bcd_data;
-    outputInterface u_outputInterface (
+    byteHandler u_byteHandler (
         .clk                  (clk),
         .reset                (reset),
         .send_b0              (send_b0),
