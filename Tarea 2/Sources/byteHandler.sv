@@ -1,8 +1,10 @@
 `timescale 1ns / 1ps
 
-module outputInterface(
+module byteHandler(
     input logic clk, reset, send_b0, send_b1, send_b2, send_b3, register_result32,
+    input logic [6:0] enables,
     input logic [31:0] result_data,
+    output logic en_disp,
     output logic [7:0] tx_data,
     output logic [31:0] bcd_out
 
@@ -82,6 +84,21 @@ module outputInterface(
     .bcd        (bcd_out)
     );
 
+
+    // Lógica para activar display. Se pasa por un FF también
+    // Activar si se está en euc, man o dot
+
+    always_ff @(posedge clk) begin
+        if (reset) begin
+            en_disp <= 0;
+        end else begin
+            if (enables[5] || enables[4] || enables[3]) begin
+                en_disp <= 1;
+            end else begin
+                en_disp <= 0;
+            end
+        end
+    end
 
     
 endmodule
