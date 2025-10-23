@@ -7,7 +7,7 @@ module outputInterface(
     input logic [31:0] result_data,
     
     output logic       tx_start,  tx_sent,
-    output logic       CA, CB, CC, CD, CE, CF, CG,
+    output logic [6:0] segments,
     output logic [7:0] tx_data,
     output logic [7:0] AN
     );
@@ -65,7 +65,7 @@ module outputInterface(
         .reset                (reset),
         .enable               (en_disp),
         .BCD_in               (bcd_data),
-        .segments             ({CA, CB, CC, CD, CE, CF, CG}),
+        .segments             (segments),
         .anodos               (AN)// {AN7, AN6, AN5, AN4, AN3, AN2, AN1, AN0}
     );
 
