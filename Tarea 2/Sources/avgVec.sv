@@ -29,9 +29,18 @@ module avgVec(
     output logic [15:0]result
     );
     
+    logic [15:0] avg_scalar;
+    logic [1:0] sum;
+    
     always_ff @(posedge clk) begin
         if(reset) result <= 16'h0;
-        else if(enable) result <= (data_A + data_B) / 2;
+        else if(enable) result <= avg_scalar;
         else result <= 16'h0;
+    end
+    
+    always_comb begin
+        sum = data_A[0] + data_B[0];
+        if(sum[0]) avg_scalar = 16'h8000 + ((data_A + data_B) / 2);
+        else avg_scalar = (data_A + data_B) / 2;
     end
 endmodule
