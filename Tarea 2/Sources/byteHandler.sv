@@ -73,13 +73,27 @@ module byteHandler(
     end
 
     logic [31:0] data_32_reg;
+    logic [31:0] data_32_reg_lim;
     assign data_32_reg = {byte_3, byte_2, byte_1, byte_0};
+
+    // Limitar para no mostrar más allá de 99.999.999 en display
+    always_ff @(posedge clk) begin
+        if (reset) begin
+            data_32_reg_lim <= 0;
+        end else begin
+            if (data_32_reg > 32'd9999_9999) begin
+                data_32_reg_lim <= 32'd9999_9999;
+            end else begin
+                data_32_reg_lim <= data_32_reg;
+            end
+        end
+    end
 
     unsigned_to_bcd u_unsigned_to_bcd (
     .clk        (clk),
     .reset      (reset),
     .trigger    (1),
-    .in         (data_32_reg),
+    .in         (data_32_reg_lim),
     .idle       (),
     .bcd        (bcd_out)
     );

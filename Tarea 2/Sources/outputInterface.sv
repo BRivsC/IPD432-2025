@@ -3,7 +3,8 @@
 
 module outputInterface #(
     parameter INTER_BYTE_DELAY = 1000000,   // ciclos de reloj de espera entre el envio de 2 bytes consecutivos
-    parameter WAIT_FOR_REGISTER_DELAY = 100 // tiempo de espera para iniciar la transmision luego de registrar el dato a enviar
+    parameter WAIT_FOR_REGISTER_DELAY = 100, // tiempo de espera para iniciar la transmision luego de registrar el dato a enviar
+    parameter DISPLAY_DURATION = 100_000  // Duración de cada dígito en el display multiplexado
 )(
     input logic clk, reset, begin_transmission, tx_busy,
     input logic [5:0] enables_in,    //  {dot, man, euc, avg, sum, read} desde CtrllUnit
@@ -16,7 +17,6 @@ module outputInterface #(
     );
 
     logic register_result32, send_b0, send_b1, send_b2, send_b3;
-    logic [7:0] dout;
 
     logic [5:0] enables;
     assign enables = enables_in;
@@ -59,10 +59,12 @@ module outputInterface #(
         .bcd_out              (bcd_data)
     );
 
+    
+
     driver_7_seg_en #(
         .N                    (32),
         .count_max            (3),
-        .clk_divider_count    (200_000)
+        .clk_divider_count    (DISPLAY_DURATION)
     ) u_driver_7_seg_en (
         .clock                (clk),
         .reset                (reset),

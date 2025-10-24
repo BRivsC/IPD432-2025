@@ -65,11 +65,10 @@ module txCtrl#(
 			end
 
             // Todas las instrucciones envían al menos 2 bytes.
-            // Read, Sum y Avg envían solo 2 bytes
+            // Euc, Read, Sum y Avg envían solo 2 bytes
 			DELAY_BYTE_1: begin
-                            //if(hold_state_timer >= INTER_BYTE_DELAY) begin
                             if (tx_busy == 0) begin
-                                if(enables[2] || enables[1] || enables[0]) // avg, sum, read
+                                if(enables[3] || enables[2] || enables[1] || enables[0]) // euc, avg, sum, read
                                     next_state = TX_DONE;
                                 else
                                     next_state = SEND_BYTE_2;
@@ -83,7 +82,6 @@ module txCtrl#(
             end
 
             DELAY_BYTE_2: begin
-                            //if(hold_state_timer >= INTER_BYTE_DELAY)
                             if (tx_busy == 0) begin
                                 if (enables[4]) // man
                                     next_state = TX_DONE;
@@ -100,7 +98,6 @@ module txCtrl#(
             end
 
             DELAY_BYTE_3: begin
-                            //if(hold_state_timer >= INTER_BYTE_DELAY)
                             if (tx_busy == 0)
                                 next_state = TX_DONE;
                         end
