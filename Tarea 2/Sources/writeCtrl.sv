@@ -19,6 +19,7 @@ module writeCtrl(
     logic update_bram_sel, bram_sel_mem, load_lsb, load_msb;
     logic [7:0] data_lsb;
     logic [1:0] data_msb;
+    logic block;
 
     always_comb begin
         next_state = state;
@@ -37,7 +38,7 @@ module writeCtrl(
 
         case(state)
             IDLE: begin
-                if(en) begin
+                if(en & ~block) begin
                     update_bram_sel = 1;    //  Actualizar apenas se reciba el enable
                     next_state = WAIT_LSB;
                 end else
@@ -127,6 +128,12 @@ module writeCtrl(
         end else begin
             bram_sel_mem <= bram_sel_mem;
         end
+    end
+    
+    always_ff@(posedge clk) begin
+        if(reset) block <= 1'b0;
+        else if(en) block <= 1'b1;
+        else block <= 1'b0;
     end
 
     
