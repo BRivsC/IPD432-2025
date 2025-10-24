@@ -80,7 +80,7 @@ module top_module #(parameter NUM_ELEMENTOS = 1024)(
         .ctrl_domain_clk(clk_process),     // output ctrl_domain_clk
         .output_domain_clk(clk_output),     // output output_domain_clk
         // Status and control signals
-        .reset(reset_input), // input reset
+        .reset(1'b0), // input reset
         // Clock in ports
         .clk_in1(CLK100MHZ)      // input clk_in1
     );
