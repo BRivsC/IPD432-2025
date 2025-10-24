@@ -24,10 +24,7 @@ module data_transmit_test(
     );
     logic tx_start, tx_busy, tx_sent;
     logic [7:0] tx_data;
-    outputInterface #(
-        .INTER_BYTE_DELAY           (1),
-        .WAIT_FOR_REGISTER_DELAY    (1)
-    ) u_outputInterface (
+    outputInterface u_outputInterface (
         .clk                        (CLK100MHZ),
         .reset                      (reset),
         .begin_transmission         (begin_transmission),
