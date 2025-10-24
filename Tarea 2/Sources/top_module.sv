@@ -25,7 +25,7 @@ module top_module #(parameter NUM_ELEMENTOS = 1024)(
     input resetN,
     input uart_rx,
     output logic uart_tx,
-    output logic [7:0] segmentos,
+    output logic [6:0] segmentos,
     output logic [7:0] AN
     );
     
@@ -167,9 +167,9 @@ module top_module #(parameter NUM_ELEMENTOS = 1024)(
 		.rx_data      (rx_data),
 		.rx_ready     (rx_ready),
 		.tx           (uart_tx),
-		.tx_start     (0),
-		.tx_data      (0),
-		.tx_busy      () //medible
+		.tx_start     (tx_start),
+		.tx_data      (tx_data),
+		.tx_busy      (tx_busy) //medible
     );
     
     inputInterface #(
@@ -224,28 +224,24 @@ module top_module #(parameter NUM_ELEMENTOS = 1024)(
         .op_done(euc_op_done)
     );
     
+    outputInterface #(
+        .INTER_BYTE_DELAY(1000000),   // ciclos de reloj de espera entre el envio de 2 bytes consecutivos
+        .WAIT_FOR_REGISTER_DELAY(100), // tiempo de espera para iniciar la transmision luego de registrar el dato a enviar
+        .DISPLAY_DURATION(100_000)  // Duración de cada dígito en el display multiplexado
+    )
+    output_interface_instance(
+        .clk(clk_output),
+        .reset(reset_input),
+        .begin_transmission(op_done_dest),
+        .tx_busy(tx_busy),
+        .enables_in(enables),    //  {dot, man, euc, avg, sum, read} desde CtrllUnit
+        .result_data(resultado),
     
-    
-//    outputInterface u_outputInterface (
-//        .clk                  (clk_output),
-//        .reset                (reset_input),
-//        .send_b0              (send_b0),
-//        .send_b1              (send_b1),
-//        .send_b2              (send_b2),
-//        .send_b3              (send_b3),
-//        .register_result32    (register_result32),
-//        .result_data          (resultado),
-//        .tx_data              (tx_data),
-//        .bcd_out              (bcd_data)
-//    );
-    
-//    driver_7_seg_en u_driver_7_seg_en (
-//        .clock                (clk_100Mhz),
-//        .reset                (reset),
-//        .enable               (enable_display),
-//        .BCD_in               (bcd_data),
-//        .segments             ({CA, CB, CC, CD, CE, CF, CG}),
-//        .anodos               (AN)// {AN7, AN6, AN5, AN4, AN3, AN2, AN1, AN0}
-//    );
+        .tx_start(tx_start),
+        .tx_sent(tx_sent_src),
+        .segments(segmentos),
+        .tx_data(tx_data),
+        .AN(AN)
+    );
     
 endmodule
