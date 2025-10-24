@@ -21,11 +21,11 @@
 
 
 module top_module #(parameter NUM_ELEMENTOS = 1024)(
-    input clk,
-    input resetN,
-    input uart_rx,
-    output logic uart_tx,
-    output logic [6:0] segmentos,
+    input CLK100MHZ,
+    input CPU_RESETN,
+    input UART_RX_USB,
+    output logic UART_TX_USB,
+    output logic [6:0] SEG,
     output logic [7:0] AN
     );
     
@@ -62,14 +62,14 @@ module top_module #(parameter NUM_ELEMENTOS = 1024)(
     PB_Debouncer reset_in(
         .clk(clk_input),
         .rst(1'b0),
-        .PB(~resetN),
+        .PB(~CPU_RESETN),
         .PB_pressed_status(reset_input)
     );
     
     PB_Debouncer reset_proc(
         .clk(clk_process),
         .rst(1'b0),
-        .PB(~resetN),
+        .PB(~CPU_RESETN),
         .PB_pressed_status(reset_process)
     );
     
@@ -82,7 +82,7 @@ module top_module #(parameter NUM_ELEMENTOS = 1024)(
         // Status and control signals
         .reset(reset_input), // input reset
         // Clock in ports
-        .clk_in1(clk)      // input clk_in1
+        .clk_in1(CLK100MHZ)      // input clk_in1
     );
     
     xpm_cdc_single/* #(
@@ -163,10 +163,10 @@ module top_module #(parameter NUM_ELEMENTOS = 1024)(
 	) uart_basic_inst (
 		.clk          (clk_input),
 		.reset        (reset_input),
-		.rx           (uart_rx),
+		.rx           (UART_RX_USB),
 		.rx_data      (rx_data),
 		.rx_ready     (rx_ready),
-		.tx           (uart_tx),
+		.tx           (UART_TX_USB),
 		.tx_start     (tx_start),
 		.tx_data      (tx_data),
 		.tx_busy      (tx_busy) //medible
