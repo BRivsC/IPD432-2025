@@ -82,13 +82,15 @@ module txCtrl#(
             end
 
             DELAY_BYTE_2: begin
-                            if (tx_busy == 0) begin
-                                if (enables[4]) // man
-                                    next_state = TX_DONE;
-                                else
-                                    next_state = SEND_BYTE_3;
+                           //if (tx_busy == 0) begin
+                           //    if (enables[4]) // man
+                           //        next_state = TX_DONE;
+                           //    else
+                           //        next_state = SEND_BYTE_3;
 
-                            end
+                           //end
+                            if (tx_busy == 0) 
+                                next_state = SEND_BYTE_3;
             end
 
             SEND_BYTE_3: begin
