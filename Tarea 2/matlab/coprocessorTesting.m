@@ -5,7 +5,7 @@ N_ELEMENTS=1024;  % define el numero de elementos de cada vector
 BIT_WIDTH = 10;
 
 % Configurar puerto serial
-COM_port = 'COM13';
+COM_port = "/dev/ttyUSB1";
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -15,14 +15,22 @@ COM_port = 'COM13';
 %(puede adaptarse facilmente si usan negativos y positivos).
 A=ceil(rand(N_ELEMENTS,1)*2^BIT_WIDTH);
 B=ceil(rand(N_ELEMENTS,1)*2^BIT_WIDTH);
+for i = 1:1024
+    if A(i)==1024
+        A(i) = 0;
+    end
+    if B(i)==1024
+        B(i) = 0;
+    end
+end
 
-%Guarda vectores A y B (cada uno de una columna de 1024 filas) en un
+%% Guarda vectores A y B (cada uno de una columna de 1024 filas) en un
 %archivo de texto. Cada linea del archivo contiene un elemento.
-h= fopen('VectorA.txt', 'w');
+h= fopen('vectorA.txt', 'w');
 fprintf(h, '%i\n', A);
 fclose(h);
 
-h= fopen('VectorB.txt', 'w');
+h= fopen('vectorB.txt', 'w');
 fprintf(h, '%i\n', B);
 fclose(h);
 
@@ -31,7 +39,7 @@ sumVec_host = A+B;
 avgVec_host = (A+B)/2;
 man_host = sum(abs(A-B));
 euc_host = sqrt(sum((A-B).^2));
-
+dot_host = dot(A,B);
 %% A partir de aca se realizan las operaciones por medio de comandos al coprocesador
 
 % Los siguientes comandos son con formato tentativo. 
@@ -45,13 +53,14 @@ write2dev('vectorA.txt','BRAMA',COM_port);
 write2dev('vectorB.txt','BRAMB',COM_port); 
 
 %readVec lee el contenido de la BRAM indicada por medio de la UART
-VecA_device = command2dev('ReadVec', COM_port, 'BRAMA');
-VecB_device = command2dev('ReadVec', COM_port, 'BRAMB');
+VecA_device = command2dev('readVec','BRAMA', COM_port);
+VecB_device = command2dev('readVec', 'BRAMB', COM_port);
 
-sumVec_device = command2dev('SumVec', COM_port); %realiza la suma elemento a elemento de los vectores almacenados y envia el resultado por la UART
-avgVec_device = command2dev('AvgVec', COM_port);
-man_device = command2dev('ManDist', COM_port); %realiza el calculo de la distancia de Manhattan entre dos vectores y envia el resultado por la UART
-euc_device = command2dev('EucDist', COM_port); %realiza el calculo de la distancia Euclideana entre dos vectores y envia el resultado por la UART
+sumVec_device = command2dev('sumVec', COM_port); %realiza la suma elemento a elemento de los vectores almacenados y envia el resultado por la UART
+avgVec_device = command2dev('avgVec', COM_port);
+man_device = command2dev('manDist', COM_port); %realiza el calculo de la distancia de Manhattan entre dos vectores y envia el resultado por la UART
+euc_device = command2dev('eucDist', COM_port); %realiza el calculo de la distancia Euclideana entre dos vectores y envia el resultado por la UART
+dot_device = command2dev('dotProd', COM_port);
 
 %% Validacion.
 % Los resultados _diff deberian ser 0 (o cercanos, dependiendo de su
@@ -62,3 +71,4 @@ sumVec_diff = sum(sumVec_host - sumVec_device)
 avgVec_diff = sum(avgVec_host - avgVec_device)
 man_diff = man_host - man_device
 euc_diff = euc_host - euc_device
+dot_diff = dot_host - dot_device
