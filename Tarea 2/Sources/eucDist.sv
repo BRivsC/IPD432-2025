@@ -33,20 +33,24 @@ module eucDist#(parameter NUM_ELEMENTOS = 1024
     output logic [15:0]result
     );
     
-    localparam counter_width = $clog2(NUM_ELEMENTOS);
+    localparam counter_width = $clog2(NUM_ELEMENTOS + 1);
     logic [29:0]aux;
     logic [counter_width:0]n;
     logic conv_raiz;
     logic [15:0]res_buff;
+    logic [9:0]res_buffer;
+    logic [9:0]resta;
     
     always_ff @(posedge clk)begin
         if(reset) begin
             aux <= 30'b0;
+            res_buffer <= 10'b0;
             n<= 0;
         end
         else if(enable) begin
             if(ctrl) begin
-                aux <= aux + ((data_A - data_B) * (data_A - data_B));
+                res_buffer <= resta;
+                aux <= aux + (res_buffer * res_buffer);
                 n <= n + 1;
             end
             else begin
@@ -61,8 +65,13 @@ module eucDist#(parameter NUM_ELEMENTOS = 1024
     end
     
     always_comb begin
-        if(n>=NUM_ELEMENTOS) conv_raiz = 1'b1;
+        if(n>=NUM_ELEMENTOS + 1) conv_raiz = 1'b1;
         else conv_raiz = 1'b0;
+    end
+    
+    always_comb begin
+        if(data_A > data_B) resta = data_A - data_B;
+        else resta = data_B - data_A;
     end
     
     raiz raiz_euc_dist (

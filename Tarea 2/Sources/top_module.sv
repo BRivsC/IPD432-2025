@@ -239,7 +239,7 @@ module top_module #(parameter NUM_ELEMENTOS = 1024)(
     
         .tx_start(tx_start),
         .tx_sent(tx_sent_src),
-        .segments(segmentos),
+        .segments(SEG),
         .tx_data(tx_data),
         .AN(AN)
     );

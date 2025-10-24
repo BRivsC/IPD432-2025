@@ -228,7 +228,7 @@ module controllUnit #(parameter NUM_ELEMENTOS = 1024)(
                 if(t >= 4) process_ctrl = 1'b1;//tiempo entre el inicio y cuando la memoria empieza a cambiar (justo el tick antes)
                 if(counter >= NUM_ELEMENTOS - 1) begin
                     counter_next = counter;
-                    if(t >= NUM_ELEMENTOS + 4) process_ctrl = 1'b0;//se ajusta para que la ventana del proceso tenga el ancho del numero de elementos
+                    if(t >= NUM_ELEMENTOS + 5) process_ctrl = 1'b0;//se ajusta para que la ventana del proceso tenga el ancho del numero de elementos
                 end
                 if(op_ready) begin
                     NEXT_STATE = SENDING;
