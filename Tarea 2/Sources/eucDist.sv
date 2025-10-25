@@ -38,6 +38,7 @@ module eucDist#(parameter NUM_ELEMENTOS = 1024
     logic [counter_width:0]n;
     logic conv_raiz;
     logic [15:0]res_buff;
+//    logic [29:0]res_buff;
     logic [9:0]res_buffer;
     logic [9:0]resta;
     
@@ -75,11 +76,22 @@ module eucDist#(parameter NUM_ELEMENTOS = 1024
     end
     
     raiz raiz_euc_dist (
-  .aclk(clk),                                        // input wire aclk
-  .s_axis_cartesian_tvalid(conv_raiz),  // input wire s_axis_cartesian_tvalid
-  .s_axis_cartesian_tdata({2'b00,aux}),    // input wire [23 : 0] s_axis_cartesian_tdata
-  .m_axis_dout_tvalid(op_done),            // output wire m_axis_dout_tvalid
-  .m_axis_dout_tdata(res_buff)              // output wire [15 : 0] m_axis_dout_tdata
-);
+        .aclk(clk),                                        // input wire aclk
+        .s_axis_cartesian_tvalid(conv_raiz),  // input wire s_axis_cartesian_tvalid
+        .s_axis_cartesian_tdata({2'b00,aux}),    // input wire [23 : 0] s_axis_cartesian_tdata
+        .m_axis_dout_tvalid(op_done),            // output wire m_axis_dout_tvalid
+        .m_axis_dout_tdata(res_buff)              // output wire [15 : 0] m_axis_dout_tdata
+    );
     assign result = {1'b0 , res_buff[14:0]};
+
+//    sqrt_int #(.WIDTH(30))
+//    simple_sqrt(      // width of radicand
+//        .clk(clk),
+//    .start(conv_raiz),             // start signal
+//    .valid(op_done),             // root and rem are valid
+//    .rad(aux),   // radicand
+//    .root(res_buff),  // root
+//    .rem()    // remainder
+//    );
+//    assign result = res_buff[15:0];
 endmodule
