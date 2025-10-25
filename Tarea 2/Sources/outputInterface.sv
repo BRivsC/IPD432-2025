@@ -59,19 +59,7 @@ module outputInterface #(
         .bcd_out              (bcd_data)
     );
 
-    // Registro para mantener el último estado de los enables hasta la próxima transmisión
-    logic en_disp_reg;
-    always_ff @(posedge clk) begin
-        if (reset) begin
-            en_disp_reg <= 0;
-        end else begin
-            if (begin_transmission) begin
-            en_disp_reg <= enables_in;
-            end else begin
-                en_disp_reg <= en_disp_reg;
-            end
-        end
-    end
+    
 
     driver_7_seg_en #(
         .N                    (32),
@@ -80,7 +68,7 @@ module outputInterface #(
     ) u_driver_7_seg_en (
         .clock                (clk),
         .reset                (reset),
-        .enable               (en_disp_reg),
+        .enable               (en_disp),
         .BCD_in               (bcd_data),
         .segments             (segments),
         .anodos               (AN)// {AN7, AN6, AN5, AN4, AN3, AN2, AN1, AN0}

@@ -5,7 +5,8 @@ N_ELEMENTS=1024;  % define el numero de elementos de cada vector
 BIT_WIDTH = 10;
 
 % Configurar puerto serial
-COM_port = "/dev/ttyUSB1";
+%COM_port = "/dev/ttyUSB1";
+COM_port = "COM13";
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

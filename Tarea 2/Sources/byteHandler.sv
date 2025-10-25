@@ -98,18 +98,32 @@ module byteHandler(
     .bcd        (bcd_out)
     );
 
-
+    
     // Lógica para activar display. Se pasa por un FF también
     // Activar si se está en euc, man o dot
+    logic en_disp_comb;
 
+    always_ff @(posedge clk) begin
+        if (reset) begin
+            en_disp_comb <= 0;
+        end else begin
+                if (enables[5] || enables[4] || enables[3]) begin
+                    en_disp_comb <= 1;
+                end else begin
+                    en_disp_comb <= 0;
+                end
+        end
+    end
+
+    // Lógica para retener estado del display
     always_ff @(posedge clk) begin
         if (reset) begin
             en_disp <= 0;
         end else begin
-            if (enables[5] || enables[4] || enables[3]) begin
-                en_disp <= 1;
-            end else begin
-                en_disp <= 0;
+            if (register_result32) begin
+                en_disp <= en_disp_comb;
+        end else begin
+                en_disp <= en_disp;
             end
         end
     end
