@@ -1,36 +1,63 @@
+`timescale 1ns/1ps
+
+
 module tb_adder_tree;
     // Parámetros
-    parameter IWIDTH = 8;
-    parameter NINPUTS = 8;  // Cambiar este valor para probar con diferentes entradas
-    
+    parameter IWIDTH = 10;
+    parameter NINPUTS = 1024;
+    localparam OWIDTH = IWIDTH + $clog2(NINPUTS);
+
     // Señales
+    logic clk;
     logic [IWIDTH-1:0] data [0:NINPUTS-1];
-    logic [IWIDTH-1:0] sum;
+    logic [OWIDTH-1:0] out;
     
-    // Instanciar el Adder Tree
+    
+    initial clk = 0;
+    always #1 clk = ~clk;
+
     AdderTree #(
-        .IWIDTH(IWIDTH),
-        .NINPUTS(NINPUTS)
-    ) uut (
-        .data(data),
-        .sum(sum)
+        .IWIDTH     (IWIDTH),
+        .NINPUTS    (NINPUTS)
+    ) dut (
+        .clk        (clk),
+        .data       (data),
+        .out        (out)
     );
+
+    integer suma_esperada;
     
     initial begin
-        // Asignar valores a las entradas
-        data[0] = 8'h01;
-        data[1] = 8'h02;
-        data[2] = 8'h03;
-        data[3] = 8'h04;
-        data[4] = 8'h05;
-        data[5] = 8'h06;
-        data[6] = 8'h07;
-        data[7] = 8'h08;
-        
-        // Esperar un poco para ver el resultado
+        // Caso 1: todos ceros
+        suma_esperada = 0;
+        foreach (data[i]) data[i] = 10'd0;
         #10;
+        foreach (data[i]) suma_esperada += data[i];
+        $display("Suma caso 1: %d\tEsperada: %d", out, suma_esperada);
+
+        // Caso 2: todos 1
+        suma_esperada = 0;
+        foreach (data[i]) data[i] = 10'd1;
+        #10;
+        foreach (data[i]) suma_esperada += data[i];
+        $display("Suma caso 2: %d\tEsperada: %d", out, suma_esperada);
+
+        // Caso 3: números cualquiera
+        //suma_esperada = 0;
+        //data = '{10'd5, 10'd50, 10'd100, 10'd0, 10'd512, 10'd1, 10'd23, 10'd7};
+        //#10;
+        //foreach (data[i]) suma_esperada += data[i];
+        //$display("Suma caso 3: %d\tEsperada: %d", out, suma_esperada);
         
-        // Mostrar el resultado
-        $display("Suma total: %h", sum);
+        // Caso 4: Valores máximos
+        suma_esperada = 0;
+        foreach (data[i]) data[i] = 10'h3FF;
+        #10;
+        foreach (data[i]) suma_esperada += data[i];
+        $display("Suma caso 4: %d\tEsperada: %d", out, suma_esperada);
+        
+        //#20 $finish;
+        
+        
     end
 endmodule

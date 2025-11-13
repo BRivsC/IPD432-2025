@@ -19,12 +19,12 @@
 //
 
 module AdderTree #(
-    parameter IWIDTH = 10,      // Ancho de las entradas
-    parameter NINPUTS = 8       // Número de entradas (debe ser potencia de 2)
+    parameter IWIDTH = 10,      
+    parameter NINPUTS = 8       
 )(
-    input  logic clk;
-    input  logic [IWIDTH-1:0] data [0:NINPUTS-1],  // Entradas de datos
-    output logic [IWIDTH + $clog2(NINPUTS) - 1:0] out  // Resultado de la suma con full precisión
+    input  logic clk,
+    input  logic [IWIDTH-1:0] data [0:NINPUTS-1], 
+    output logic [IWIDTH + $clog2(NINPUTS) - 1:0] out  
 );
 
     // Nro de niveles y ancho de salida
@@ -37,8 +37,8 @@ module AdderTree #(
     // Primer nivel: asignar las entradas directamente
     genvar i, j;
     generate
-        always_ff @(posedge clk) begin : level_0
-            for (i = 0; i < NINPUTS; i++) begin 
+        for (i = 0; i < NINPUTS; i++) begin 
+            always_ff @(posedge clk) begin : level_0
                 sum[i] <= {{(OWIDTH - IWIDTH){1'b0}},data[i]};
             end
         end
@@ -49,14 +49,14 @@ module AdderTree #(
         for (i = 0; i < NLEVELS; i++) begin : level
             for (j = 0; j < (NINPUTS >> (i+1)); j++) begin : suma
                 always_ff @(posedge clk) begin
-                    sum[2*NINPUTS - (NINPUTS >> i) + j] <= sum[2*NINPUTS - (2*NINPUTS >> i) + 2*j] + sumas[2*NINPUTS - (2*NINPUTS >> i) + 2*j + 1];
+                    sum[2*NINPUTS - (NINPUTS >> i) + j] <= sum[2*NINPUTS - (2*NINPUTS >> i) + 2*j] + sum[2*NINPUTS - (2*NINPUTS >> i) + 2*j + 1];
                 end
             end
         end
     endgenerate
 
     // La salida es el resultado de la última suma en el último nivel
-    always_ff @posedge(clk) begin:
+    always_ff @(posedge clk) begin
         out <= sum[(2*NINPUTS)-2];
     end
 
