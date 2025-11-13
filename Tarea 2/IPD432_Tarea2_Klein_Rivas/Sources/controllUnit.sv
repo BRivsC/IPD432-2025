@@ -33,6 +33,7 @@ module controllUnit #(parameter NUM_ELEMENTOS = 1024)(
     output logic begin_transmision,//señal para iniciar la transmision cuando hay un resultado listo
     output logic begin_write,//señal para empezar la escritura
     output logic [5:0] enables,//arreglo de enables para las distintas operaciones. Mismo orden que command
+    output logic [8:0] ctrl_unit_state, //estado de unidad de control para leer desde el ILA
     output logic [9:0] mem_dir//direccion de memoria a leer
     );
     
@@ -42,6 +43,7 @@ module controllUnit #(parameter NUM_ELEMENTOS = 1024)(
     logic [9:0]counter ,counter_next/*, counter_sync*/;
     logic [10:0]t;//timer para operaciones de estado
     //logic read_block;//bloquea el cambio de estado por 1 tick al activarse.
+    assign ctrl_unit_state = STATE;
     
     always_ff @(posedge clk)begin
         if(reset) begin

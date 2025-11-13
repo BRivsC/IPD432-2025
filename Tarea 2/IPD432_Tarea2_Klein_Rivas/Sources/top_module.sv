@@ -39,13 +39,13 @@ module top_module #(parameter NUM_ELEMENTOS = 1024)(
     logic tx_start;//bit para iniciar transmision
     logic [7:0]tx_data;//byte de datos a transmitir
     logic tx_busy;//byte que indica que el canal de envio esta ocupado
-    logic operacion_terminada;//se termino una operacion aritmetica y el resultado se puede transmitir
+    //logic operacion_terminada;//se termino una operacion aritmetica y el resultado se puede transmitir
     logic [5:0]enables;//flags que indican la operacion a realizar
     logic [31:0]resultado;//resultado de la operacin del processing core
-    logic register_result32;
-    logic send_b0, send_b1, send_b2, send_b3;//banderas de envio de bytes de resultado
-    logic tx_done;//byte que indica que se envio un dato completo
-    logic bcd_data;//datos bcd para el display
+    //logic register_result32;
+    //logic send_b0, send_b1, send_b2, send_b3;//banderas de envio de bytes de resultado
+    //logic tx_done;//byte que indica que se envio un dato completo
+    //logic bcd_data;//datos bcd para el display
     logic begin_write_src, begin_write_dest;
     logic op_done_src, op_done_dest;
     logic [9:0] read_mem_dir;
@@ -80,6 +80,7 @@ module top_module #(parameter NUM_ELEMENTOS = 1024)(
         .ctrl_domain_clk(clk_process),     // output ctrl_domain_clk
         .output_domain_clk(clk_output),     // output output_domain_clk
         // Status and control signals
+        //.reset(reset_input), // input reset
         .reset(1'b0), // input reset
         // Clock in ports
         .clk_in1(CLK100MHZ)      // input clk_in1
@@ -157,6 +158,7 @@ module top_module #(parameter NUM_ELEMENTOS = 1024)(
         .dest_out              (command_ready_dest)
     );
     
+    
     uart_basic #(
 		.CLK_FREQUENCY(100_000_000), // reloj base de entrada
 		.BAUD_RATE(115200)
@@ -191,6 +193,20 @@ module top_module #(parameter NUM_ELEMENTOS = 1024)(
         //.data_b                  (data_b)
         .data_b                  (bram_b_dout)
     );
+
+    logic [8:0] ctrl_unit_state;
+
+    ila_0 ila (
+	.clk(clk_process), // input wire clk
+
+
+	.probe0(op_done_dest), // input wire [0:0]  probe0  
+	.probe1(tx_sent_dest), // input wire [0:0]  probe1 
+	.probe2(command_ready_dest), // input wire [0:0]  probe2 
+	.probe3(enables), // input wire [5:0]  probe3
+	.probe4(ctrl_unit_state) // input wire [8:0]  probe4
+);
+
     
     controllUnit #(
         .NUM_ELEMENTOS        (NUM_ELEMENTOS)
@@ -209,6 +225,7 @@ module top_module #(parameter NUM_ELEMENTOS = 1024)(
         .enables              (enables),            //arreglo de enables para las distintas operaciones. Mismo orden que command
         //direccion de memoria a leer
         //.mem_dir              (read_mem_dir)
+        .ctrl_unit_state,
         .mem_dir              (read_mem_dir)
     );
     

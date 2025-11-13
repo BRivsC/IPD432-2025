@@ -7,6 +7,8 @@ arguments (Input)
     COM     string
 end
 
+PAUSE_S = 0.005;
+
 vector_size = 1024;
 baud_rate = 115200;
 port = serialport(COM,baud_rate);
@@ -39,5 +41,6 @@ write(port,vector,"uint16");
 %    
 %end
 
-clear port
+% clear port
+% pause(PAUSE_S);
 end

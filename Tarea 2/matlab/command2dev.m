@@ -1,6 +1,7 @@
 function [vector] = command2dev(varargin)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
+PAUSE_S = 0.005;
 
 if nargin == 2
     operation_in = varargin{1};
@@ -61,5 +62,6 @@ switch operation_in
 end
 
 % Close the serial port connection after operation
-clear port;
+% clear port;
+% pause(PAUSE_S);
 end
