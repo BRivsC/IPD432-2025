@@ -5,7 +5,7 @@ module sipo_mem#(
     parameter IWIDTH = 10,
     parameter NINPUTS = 8
 )(
-    input logic clk, we,
+    input logic clk, we, rst,
     input logic [$clog2(IWIDTH)-1:0] addr,
     input logic [IWIDTH-1:0] in,
     output logic [IWIDTH-1:0] out [NINPUTS-1:0] 
@@ -15,6 +15,11 @@ module sipo_mem#(
 
     // Banco de registros
     always_ff @(posedge clk) begin
+        if (rst) begin
+            for (int i = 0; i < NINPUTS; i++) begin
+                registers[i] <= 0;
+            end
+        end else
         if (we) begin
             registers[addr] <= in;
         end else begin
