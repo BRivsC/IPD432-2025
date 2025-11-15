@@ -1,25 +1,23 @@
 `timescale 1ns/1ps
 // Memoria que recibe una palabra por vez y las retorna en una salida paralela
 // Imita al funcionamiento de un puerto de BRAM con su dirección, dato y Write Enable
-module sipo_mem#(
+module sipoMem#(
     parameter IWIDTH = 10,
     parameter NINPUTS = 8
 )(
     input logic clk, we,
-    input logic [$clog2(IWIDTH)-1:0] addr,
+    input logic [$clog2(NINPUTS)-1:0] addr,
     input logic [IWIDTH-1:0] in,
     output logic [IWIDTH-1:0] out [NINPUTS-1:0] 
 );
 
-    logic [IWIDTH-1:0] registers [0:NINPUTS-1];
+    logic [IWIDTH-1:0] registers [NINPUTS-1:0];
 
     // Banco de registros
     always_ff @(posedge clk) begin
         if (we) begin
             registers[addr] <= in;
-        end else begin
-            registers <= registers;
-        end
+        end 
     end
 
     // Asignar los valores de los registros a la salida 'out'

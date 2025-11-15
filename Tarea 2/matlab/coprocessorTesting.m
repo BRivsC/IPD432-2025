@@ -3,25 +3,37 @@ clear; clc;
 %% Configuracion de entorno global
 N_ELEMENTS=1024;  % define el numero de elementos de cada vector
 BIT_WIDTH = 10;
-N_TESTS = 100; % Repetición de pruebas
+N_TESTS = 150; % Repetición de pruebas
 %PAUSE_S = 0.005;
 
 % Configurar puerto serial
 %COM_port = "/dev/ttyUSB1";
 COM_port = "COM13";
+vector_size = 1024;
+baud_rate = 115200;
+port = serialport(COM_port,baud_rate);
+port.DataBits = 8;
+port.Timeout = 0.5;
+port.Parity = "none";
+port.StopBits = 1;
+port.FlowControl = "none";
+
+flush(port,"input");
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Para las pruebas dinamicas, se recomienda incluir el codigo en un loop que le permita probar varias iteraciones de operaciones
-
 for test = 1:N_TESTS
     
     %Genera vectores A y B de 1024 elementos con numeros positivos 
     %(puede adaptarse facilmente si usan negativos y positivos).
     A=ceil(rand(N_ELEMENTS,1)*2^BIT_WIDTH);
     B=ceil(rand(N_ELEMENTS,1)*2^BIT_WIDTH);
-    %A=0*ceil(rand(N_ELEMENTS,1)*2^BIT_WIDTH);
-    %B=0*ceil(rand(N_ELEMENTS,1)*2^BIT_WIDTH);
+
+    % Sanity checks: todos 1 o todos 0
+    %A=0*ceil(rand(N_ELEMENTS,1)*2^BIT_WIDTH) + 1;
+    %B=0*ceil(rand(N_ELEMENTS,1)*2^BIT_WIDTH) + 1;
     for i = 1:1024
         if A(i)==1024
             A(i) = 0;
@@ -56,24 +68,25 @@ for test = 1:N_TESTS
     % No se aceptarán comentarios del tipo: "hay que poner ese argumento porque sino no funciona", sin una justificacion adecuada.
     
     %writeVec escribe un vector almacenado en un archivo de texto en la BRAM indicada por medio de la UART
-    write2dev('vectorA.txt','BRAMA',COM_port); 
+    %write2dev('vectorA.txt','BRAMA',COM_port); 
+    write2dev('vectorA.txt','BRAMA',port); 
     %pause(PAUSE_S)
-    write2dev('vectorB.txt','BRAMB',COM_port); 
+    write2dev('vectorB.txt','BRAMB',port); 
     %pause(PAUSE_S)
     %readVec lee el contenido de la BRAM indicada por medio de la UART
-    VecA_device = command2dev('readVec','BRAMA', COM_port);
+    VecA_device = command2dev('readVec','BRAMA', port);
     %pause(PAUSE_S)
-    VecB_device = command2dev('readVec', 'BRAMB', COM_port);
+    VecB_device = command2dev('readVec', 'BRAMB', port);
     %pause(PAUSE_S)
-    sumVec_device = command2dev('sumVec', COM_port); %realiza la suma elemento a elemento de los vectores almacenados y envia el resultado por la UART
+    sumVec_device = command2dev('sumVec', port); %realiza la suma elemento a elemento de los vectores almacenados y envia el resultado por la UART
     %pause(PAUSE_S)
-    avgVec_device = command2dev('avgVec', COM_port);
+    avgVec_device = command2dev('avgVec', port);
     %pause(PAUSE_S)
-    man_device = command2dev('manDist', COM_port); %realiza el calculo de la distancia de Manhattan entre dos vectores y envia el resultado por la UART
+    man_device = command2dev('manDist', port); %realiza el calculo de la distancia de Manhattan entre dos vectores y envia el resultado por la UART
     %pause(PAUSE_S)
-    euc_device = command2dev('eucDist', COM_port); %realiza el calculo de la distancia Euclideana entre dos vectores y envia el resultado por la UART
+    euc_device = command2dev('eucDist', port); %realiza el calculo de la distancia Euclideana entre dos vectores y envia el resultado por la UART
     %pause(PAUSE_S)
-    dot_device = command2dev('dotProd', COM_port);
+    dot_device = command2dev('dotProd', port);
     %pause(PAUSE_S)
     
     

@@ -1,28 +1,25 @@
 function [vector] = command2dev(varargin)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
-PAUSE_S = 0.005;
 
 if nargin == 2
     operation_in = varargin{1};
-    COM_in = varargin{2};
+    port = varargin{2};
 end
 if nargin == 3
     operation_in = varargin{1};
-    COM_in = varargin{3};
+    port = varargin{3};
     BRAM_in = varargin{2};
 end
 
 vector_size = 1024;
 baud_rate = 115200;
-port = serialport(COM_in,baud_rate);
-port.DataBits = 8;
-port.Timeout = 0.5;
-port.Parity = "none";
-port.StopBits = 1;
-port.FlowControl = "none";
-
-flush(port,"input");
+% port = serialport(COM_in,baud_rate);
+% port.DataBits = 8;
+% port.Timeout = 0.5;
+% port.Parity = "none";
+% port.StopBits = 1;
+% port.FlowControl = "none";
+% 
+% flush(port,"input");
 
 switch operation_in
     case "readVec"

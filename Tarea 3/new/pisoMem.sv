@@ -4,7 +4,7 @@
 // a shiftear y retornar valores al recibir una señal 'en'.
 // Para una entrada paralela retorna del menos significativo al más significativo
 
-module piso_mem#(
+module pisoMem#(
     parameter IWIDTH = 10,
     parameter NINPUTS = 8
 )(
@@ -24,16 +24,14 @@ module piso_mem#(
             end
         end else if (en) begin
         // Shiftear de más significativo a menos
-            for (int i = NINPUTS-1; i > 0; i--) begin
-                shift_regs[i] <= shift_regs[i-1];
+            for (int i = 0; i < NINPUTS-1; i++) begin
+                shift_regs[i] <= shift_regs[i+1];
             end
-            //shift_regs[0] <= '0;
-            shift_regs[0] <= shift_regs[0];
-            
+            shift_regs[NINPUTS-1] <= shift_regs[NINPUTS-1]; // Retiene el más significativo para no rellenar con X
         end 
     end
 
-    // Salida
+    // Tomar el menos significativo como salida
     always_ff @(posedge clk) begin
         out <= shift_regs[0];
     end
