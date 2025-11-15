@@ -5,7 +5,7 @@
 // 
 // Create Date: 10/11/2025 11:28:27 PM
 // Design Name: 
-// Module Name: parallelProcessingCore
+// Module Name: pipelinedProcessingCore
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -34,10 +34,11 @@ module pipelinedProcessingCore #(
     //// lectura de memorias
     input read_mem_sel,
     //// manejo de memoria
-    input load_piso, en_piso,
-    input update_man,
+    //input load_piso, shift_mem,
+    //input update_man,
 
-    output logic [31:0] result,
+    output logic [31:0] par_result [NINPUTS-1:0], // Vectores resultado en paralelo
+    output logic [31:0] man_result, // Resultado de manhattan como escalar
     output logic op_done
     );
 
@@ -106,7 +107,7 @@ module pipelinedProcessingCore #(
     ) PISO (
         .clk        (clk),
         .load       (load),
-        .en         (en_piso),
+        .en         (shift_mem),
         .in         (par_result),
         .out        (ser_result)
     );

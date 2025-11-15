@@ -6,7 +6,7 @@ module tb_mem_piso;
     parameter NINPUTS = 8;
 
     // Señales
-    logic clk, load, en;
+    logic clk, load, en, rst;
     logic [IWIDTH-1:0] in [NINPUTS-1:0];
     logic [IWIDTH-1:0] out;
 
@@ -18,7 +18,8 @@ module tb_mem_piso;
         .load(load),
         .en(en),
         .in(in),
-        .out(out)
+        .out(out),
+        .rst
     );
 
     initial clk = 0;
@@ -29,6 +30,7 @@ module tb_mem_piso;
         // Inicialización
         load = 0;
         en   = 0;
+        rst  = 0;
         foreach (in[i]) in[i] = 0;
 
 
@@ -80,6 +82,9 @@ module tb_mem_piso;
         #10
 
         en = 0;
+
+        #30 rst = 1;
+        #10 rst = 0;
 
         #20 $finish;
     end
