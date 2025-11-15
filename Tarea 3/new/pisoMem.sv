@@ -9,7 +9,7 @@ module pisoMem#(
     parameter NINPUTS = 8
 )(
     input logic clk,
-    input logic load, en,
+    input logic load, en, rst,
     input logic [IWIDTH-1:0] in [NINPUTS-1:0],
     output logic [IWIDTH-1:0] out
 );
@@ -17,6 +17,11 @@ module pisoMem#(
 
     // Cargar y shiftear
     always_ff @(posedge clk) begin 
+        if (rst) begin
+            for (int i = 0; i < NINPUTS; i++) begin
+                shift_regs[i] <= 0;
+            end
+        end else
         // Cargar
         if (load) begin
             for (int i = 0; i < NINPUTS; i++) begin
