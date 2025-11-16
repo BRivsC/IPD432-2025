@@ -24,7 +24,7 @@ module AdderTree #(
 )(
     input  logic clk,
     input  logic [IWIDTH-1:0] data [0:NINPUTS-1], 
-    output logic [IWIDTH + $clog2(NINPUTS) - 1:0] out  
+    output logic [31:0] out  
 );
 
     // Nro de niveles y ancho de salida

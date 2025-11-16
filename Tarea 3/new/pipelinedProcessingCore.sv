@@ -47,11 +47,11 @@ module pipelinedProcessingCore #(
     always_comb begin: readVec
         if (read_mem_sel) begin
             foreach (result_read[i]) begin 
-                result_read[i] = {22'd0,data_A[i]};
+                result_read[i] = {22'd0,data_B[i]};
             end
         end else begin
             foreach (result_read[i]) begin
-                result_read[i] = {22'd0,data_B[i]};
+                result_read[i] = {22'd0,data_A[i]};
             end
         end
     end: readVec
@@ -102,7 +102,7 @@ module pipelinedProcessingCore #(
     ) u_AdderTree (
         .clk        (clk),
         .data       (result_resta),
-        .out        ({'d0,man_result})
+        .out        (man_result)
     );
 
 
