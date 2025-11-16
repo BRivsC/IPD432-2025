@@ -7,15 +7,15 @@ module divBy2Vec #(
 )(
     input  logic clk,
     input  logic [IWIDTH-1:0] data [NINPUTS-1:0], 
-    output logic [IWIDTH - 1:0] out [NINPUTS-1:0]
+    output logic [IWIDTH-1:0]  out [NINPUTS-1:0]
 );
     genvar i;
-    generate
+    //generate
         for (i=0; i < NINPUTS - 1; i++) begin
             always_ff @(posedge clk) begin
                 for (int i = 0; i < NINPUTS; i++)
                     out[i] <= data[i] >> 1;
             end
         end
-    endgenerate
+    //endgenerate
 endmodule

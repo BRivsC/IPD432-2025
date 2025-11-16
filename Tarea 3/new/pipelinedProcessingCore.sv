@@ -21,52 +21,37 @@
 
 
 module pipelinedProcessingCore #(
-    parameter IWIDTH = 10,
     parameter NINPUTS = 8
 )(
-    input [IWIDTH-1:0] data_A [NINPUTS-1:0],
-    input [IWIDTH-1:0] data_B [NINPUTS-1:0],
+    input [9:0] data_A [NINPUTS-1:0],
+    input [9:0] data_B [NINPUTS-1:0],
     input [5:0] enables,
-    input ctrl,
     input clk,
-    input reset,
     input read_mem_sel,
 
-    output logic [IWIDTH + $clog2(NINPUTS) - 1:0] par_result [NINPUTS- 1:0], // Vectores resultado en paralelo
-    output logic [IWIDTH + $clog2(NINPUTS) - 1:0] man_result, // Resultado de manhattan como escalar
-    output logic op_done
+    output logic [31:0] par_result [NINPUTS- 1:0], // Vectores resultado en paralelo
+    output logic [31:0] man_result // Resultado de manhattan como escalar
     );
 
+    localparam IWIDTH = 10;
     localparam OWIDTH = IWIDTH + $clog2(NINPUTS);
     
-    logic [OWIDTH-1:0]result_read [NINPUTS-1:0];
-    logic [OWIDTH-1:0]result_sum  [NINPUTS-1:0];
-    logic [OWIDTH-1:0]result_avg  [NINPUTS-1:0];
-    logic [IWIDTH-1:0]result_resta[NINPUTS-1:0];
+    
+    logic [31:0]result_read [NINPUTS-1:0];
+    logic [31:0]result_sum  [NINPUTS-1:0];
+    logic [31:0]result_avg  [NINPUTS-1:0];
+    logic [9:0]result_resta[NINPUTS-1:0];
 
-    /*
-    logic [15:0]result_read;
-    logic [15:0]result_sum;
-    logic [15:0]result_avg;
-    logic [15:0]result_euc;
-    logic [23:0]result_man;
-    logic [31:0]result_dot;
-    */
-
-    //logic [IWIDTH-1:0]par_result [NINPUTS-1:0]; // Resultado en paralelo para read, sum y avg
-    logic [OWIDTH-1:0]ser_result; // Resultado en serie para man
 
     // Lectura: escoger memoria a leer
     always_comb begin: readVec
         if (read_mem_sel) begin
             foreach (result_read[i]) begin 
-                result_read[i] = {'d0,data_A[i]};
+                result_read[i] = {22'd0,data_A[i]};
             end
-            //result_read = {'d0,data_A};
         end else begin
             foreach (result_read[i]) begin
-                result_read[i] = {'d0,data_B[i]};
-            //result_read = {'d0,data_B};
+                result_read[i] = {22'd0,data_B[i]};
             end
         end
     end: readVec
@@ -90,7 +75,7 @@ module pipelinedProcessingCore #(
     // Acá me aprovecho de los sumadores ya existentes
     // En teoría agrega 1 ciclo a lo ya obtenido con la suma
     divBy2Vec #(
-        .IWIDTH     (OWIDTH),
+        .IWIDTH     (32),
         .NINPUTS    (NINPUTS)
     ) u_divBy2Vec (
         .clk        (clk),
@@ -102,7 +87,7 @@ module pipelinedProcessingCore #(
     // Distancia Manhattan
     // Tiene 2 etapas: una de resta y otra de sumatoria 
     absSubVec #(
-        .IWIDTH     (IWIDTH),
+        .IWIDTH     (10),
         .NINPUTS    (NINPUTS)
     ) u_absSubVec (
         .clk        (clk),
@@ -112,12 +97,12 @@ module pipelinedProcessingCore #(
     );
 
     AdderTree #(
-        .IWIDTH     (IWIDTH),
+        .IWIDTH     (10),
         .NINPUTS    (NINPUTS)
     ) u_AdderTree (
         .clk        (clk),
         .data       (result_resta),
-        .out        (man_result)
+        .out        ({'d0,man_result})
     );
 
 

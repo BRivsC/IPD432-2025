@@ -8,7 +8,7 @@ module absSubVec #(
     input  logic clk,
     input  logic [IWIDTH-1:0] data_A [NINPUTS-1:0], 
     input  logic [IWIDTH-1:0] data_B [NINPUTS-1:0], 
-    output logic [IWIDTH + $clog2(NINPUTS) - 1:0] out [NINPUTS-1:0]
+    output logic [IWIDTH-1:0] out [NINPUTS-1:0]
 );
     genvar i;
     generate
