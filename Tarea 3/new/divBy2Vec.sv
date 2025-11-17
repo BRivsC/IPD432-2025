@@ -11,9 +11,9 @@ module divBy2Vec #(
 );
     genvar i;
     //generate
-        for (i=0; i < NINPUTS - 1; i++) begin
+        for (i=0; i < NINPUTS ; i++) begin
             always_ff @(posedge clk) begin
-                for (int i = 0; i < NINPUTS; i++)
+                //for (int i = 0; i < NINPUTS; i++)
                     out[i] <= data[i] >> 1;
             end
         end

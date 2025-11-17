@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 
-module top_tarea3 #(parameter NUM_ELEMENTOS = 1024)(
+module top_tarea3 #(parameter NUM_ELEMENTOS = 8)(
     input CLK100MHZ,
     input CPU_RESETN,
     input UART_RX_USB,
@@ -24,16 +24,21 @@ module top_tarea3 #(parameter NUM_ELEMENTOS = 1024)(
     logic [31:0]resultado;//resultado de la operacin del processing core
     logic begin_write_src, begin_write_dest;
     logic op_done_src, op_done_dest;
-    logic [9:0] read_mem_dir;
+    //logic [9:0] read_mem_dir;
     logic write_done_src, write_done_dest;
     logic command_ready_src, command_ready_dest;
     logic [7:0] command;
-    logic [9:0] bram_a_dout;
-    logic [9:0] bram_b_dout;
+    //logic [9:0] bram_a_dout;
+    //logic [9:0] bram_b_dout;
+    logic [9:0] data_a [NUM_ELEMENTOS-1:0];
+    logic [9:0] data_b [NUM_ELEMENTOS-1:0];
     logic tx_sent_src, tx_sent_dest;
-    logic euc_op_done;
-    logic process_control;
-    logic read_enable;
+    //logic euc_op_done;
+    //logic process_control;
+    logic read_mem_sel;
+    //logic read_enable;
+    logic shift_mem;
+    logic load_mem;
     
     PB_Debouncer reset_in(
         .clk(clk_input),
@@ -148,8 +153,9 @@ module top_tarea3 #(parameter NUM_ELEMENTOS = 1024)(
 		.tx_busy      (tx_busy) //medible
     );
     
-
+/*
     // Sacar dirección de lectura
+
     inputInterface #(
         .NUM_ELEMENTOS           (NUM_ELEMENTOS)
     ) u_inputInterface (
@@ -169,7 +175,86 @@ module top_tarea3 #(parameter NUM_ELEMENTOS = 1024)(
         //.data_b                  (data_b)
         .data_b                  (bram_b_dout)
     );
+
+*/
+
+    sipoInputInterface #(
+        .NUM_ELEMENTOS    (NUM_ELEMENTOS)
+    ) input_interface (
+        .input_domain_clk (clk_input),
+        .reset            (reset_input),
+        .rx_ready         (rx_ready),
+        .begin_write      (begin_write_dest),
+        .op_done          (op_done_dest),
+        .rx_data          (rx_data),
+        .write_done       (write_done_src),
+        .command_ready    (command_ready_src),
+        .command          (command),
+        .data_a           (data_a),
+        .data_b           (data_b)
+    );
+
+    logic [31:0] par_result [NUM_ELEMENTOS-1:0];
+    logic [31:0] man_result;
+
+    pipelinedProcessingCore #(
+        .NINPUTS(NUM_ELEMENTOS)
+    ) processing_core (
+        .data_A(data_a),
+        .data_B(data_b),
+        .enables(enables),
+        .clk(clk_process),
+        .read_mem_sel(read_mem_sel),
+        .par_result(par_result),
+        .man_result(man_result)
+    );
+
+	pipelineCtrlUnit #(
+		.NUM_ELEMENTOS         (NUM_ELEMENTOS)
+    ) ctrl_unit (
+		.clk                   (clk_process),
+		.reset                 (reset_process),
+		.command_ready         (command_ready_dest),
+		.write_done            (write_done_dest),
+		.tx_sent               (tx_sent_dest),
+		.command               (command),
+		.begin_transmission    (op_done_src),
+		.begin_write           (begin_write_src),
+		.read_mem_sel          (read_mem_sel),
+		.shift_mem             (shift_mem),
+		.load_mem              (load_mem),
+		.enables               (enables)
+	);
+
+
+    // Memoria de salida
+    resultMem #(
+        .NINPUTS        (8)
+    ) result_mem (
+        .par_data_in    (par_result),
+        .man_data_in    (man_result),
+        .enables        (enables),
+        .clk            (clk_process),
+        .rst            (reset_process),
+        .load_mem       (load_mem),
+        .shift_mem      (shift_mem),
+        .result_out     (resultado)
+    );
+/*
+    pisoMem #(
+        .IWIDTH     (32),
+        .NINPUTS    (NUM_ELEMENTOS)
+    ) piso_mem (
+        .clk        (clk_process),
+        .load       (load_mem),
+        .en         (shift_mem),
+        .rst        (reset_process),
+        .in         (par_result),
+        .out        (resultado)
+    );
     
+*/
+    /*
     controllUnit #(
         .NUM_ELEMENTOS        (NUM_ELEMENTOS)
     ) u_controllUnit (
@@ -190,6 +275,8 @@ module top_tarea3 #(parameter NUM_ELEMENTOS = 1024)(
         .mem_dir              (read_mem_dir)
     );
     
+
+    
     processingCore #(.NUM_ELEMENTOS(NUM_ELEMENTOS))
     pCore(
         .data_A({6'b0 , bram_a_dout}),
@@ -201,7 +288,7 @@ module top_tarea3 #(parameter NUM_ELEMENTOS = 1024)(
         .result(resultado),
         .op_done(euc_op_done)
     );
-    
+    */
     outputInterface #(
         .INTER_BYTE_DELAY(1000000),   // ciclos de reloj de espera entre el envio de 2 bytes consecutivos
         .WAIT_FOR_REGISTER_DELAY(100), // tiempo de espera para iniciar la transmision luego de registrar el dato a enviar

@@ -1,15 +1,16 @@
 `timescale 1ns / 1ps
 // Módulo de interfaz de entrada con memorias, controlador de escritura, decodificador de comandos y contador de direcciones.
 
-module inputInterface#(
-    parameter NUM_ELEMENTOS = 1024
+module sipoInputInterface#(
+    parameter NUM_ELEMENTOS = 8
 )(
-    input logic input_domain_clk, processor_domain_clk, reset, rx_ready, begin_write, op_done,
+    input logic input_domain_clk, reset, rx_ready, begin_write, op_done,
     input logic [7:0] rx_data,
-    input logic [9:0] read_mem_dir,
+    //input logic [9:0] read_mem_dir,
     output logic write_done, command_ready,
-    output logic [7:0] command, //  Sigue formato para MainCtrl (dir memoria 0A, 1B, write, read, sum, avg, euc dist, man dist y dot prod)
-    output logic [9:0] data_a, data_b
+    output logic [7:0] command, //  Sigue formato para CtrlUnit (dir memoria 0A, 1B, write, read, sum, avg, euc dist, man dist y dot prod)
+    output logic [9:0] data_a [NUM_ELEMENTOS-1:0],
+    output logic [9:0] data_b [NUM_ELEMENTOS-1:0]
     );
 
     logic [9:0] write_data;
@@ -77,6 +78,31 @@ module inputInterface#(
         .command_ready    (command_ready)
     );
 
+    sipoMem #(
+        .IWIDTH     (10),
+        .NINPUTS    (NUM_ELEMENTOS)
+    ) MemA (
+        .clk        (input_domain_clk),
+        .we         (wea_a),
+        .rst        (reset),
+        .addr       (write_address),
+        .in         (write_data),
+        .out        (data_a)
+    );
+
+    sipoMem #(
+        .IWIDTH     (10),
+        .NINPUTS    (NUM_ELEMENTOS)
+    ) MemB (
+        .clk        (input_domain_clk),
+        .we         (wea_b),
+        .rst        (reset),
+        .addr       (write_address),
+        .in         (write_data),
+        .out        (data_b)
+    );
+
+    /*
     blk_mem_gen_0 BRAMA (
         .clka(input_domain_clk),   // input wire clka
         .ena(1),                   // input wire ena
@@ -106,6 +132,6 @@ module inputInterface#(
         .dinb(10'd0),               // input wire [9 : 0] dinb
         .doutb(data_b)         // output wire [9 : 0] doutb
     );
-
+*/
 
 endmodule

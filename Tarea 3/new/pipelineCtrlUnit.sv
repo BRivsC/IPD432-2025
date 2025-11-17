@@ -32,12 +32,12 @@ module pipelineCtrlUnit #(parameter NUM_ELEMENTOS = 1024)(
     output logic read_mem_sel,//señal para seleccionar qué memoria leer
     output logic shift_mem,//señal para shiftear memoria PISO
     output logic load_mem,//señal para cargar memorias
-    output logic [5:0] enables,//arreglo de enables para las distintas operaciones. Mismo orden que command
+    output logic [5:0] enables//arreglo de enables para las distintas operaciones. Mismo orden que command
     );
     
     logic [7:0]operation;//operacion a realizar memoria activa, WRITE,READ, SUM, AVG,EUCDIST
     //MANDIST Y DOTPROD
-    enum logic [8:0] {IDLE, WRITE, READ, SUM, AVG, MAN_DIST, STORE, SHIFT_MEM, SENDING} STATE, NEXT_STATE = IDLE;
+    enum logic [8:0] {IDLE, WRITE, READ, SUM, AVG, MAN_DIST, STORE, SHIFT_MEM, SENDING} STATE, NEXT_STATE;
     logic [9:0]counter ,counter_next;
     logic [10:0]t;//timer para operaciones de estado
     
@@ -70,6 +70,7 @@ module pipelineCtrlUnit #(parameter NUM_ELEMENTOS = 1024)(
         enables = 6'b0;
         load_mem = 1'b0;
         shift_mem = 1'b0;
+        read_mem_sel = 0;
 
         case(STATE)
             IDLE: begin

@@ -28,9 +28,9 @@ module parallelSumVec #(
 );
     genvar i;
     generate
-        for (i=0; i < NINPUTS - 1; i++) begin
+        for (i=0; i < NINPUTS ; i++) begin
             always_ff @(posedge clk) begin
-                for (int i = 0; i < NINPUTS; i++)
+                //for (int i = 0; i < NINPUTS; i++)
                     out[i] <= data_A[i] + data_B[i];
             end
         end
