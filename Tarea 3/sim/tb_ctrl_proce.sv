@@ -2,7 +2,7 @@
 
 module tb_ctrl_proce;
 
-    localparam NINPUTS = 8;
+    localparam NINPUTS = 1024;
 
     // ===============================
     // Señales del sistema
@@ -69,7 +69,7 @@ module tb_ctrl_proce;
     // ===============================
     initial begin
         clk = 0;
-        forever #5 clk = ~clk;
+        forever #1 clk = ~clk;
     end
 
     // ===============================
@@ -101,6 +101,8 @@ module tb_ctrl_proce;
         //           bit0 bit1 bit2 bit3 bit4 bit5 bit6 bit7
         // SUM = 0000_0100
         // ===============================
+
+        /*
         @(posedge clk);
         command = 8'b0000_0100;
         command_ready = 1;
@@ -110,9 +112,9 @@ module tb_ctrl_proce;
 
         // FSM ahora va a SUM -> STORE -> SENDING -> SHIFT_MEM ...
         // Simulemos tx_sent para avanzar estados
-        repeat (5) begin
-            #15 tx_sent = 1;
-            #10 tx_sent = 0;
+        repeat (NINPUTS) begin
+            #10 tx_sent = 1; // quizás deba tener forma de pulso pa que funcione
+            #2 tx_sent = 0;
         end
 
         // ===============================
@@ -124,9 +126,35 @@ module tb_ctrl_proce;
             $display("par_result[%0d] = %0d", i, par_result[i]);
 
         $display("man_result = %0d", man_result);
+*/
 
-        #40;
-        $finish;
+        // ==========================================================
+        // SEGUNDA OPERACIÓN : ManDist (bit5 = 1)
+        // comando: 0010_0000
+        // ==========================================================
+        @(posedge clk);
+        command = 8'b0010_0000;   // manDist
+        command_ready = 1;
+        // Cargar valores simples en A y B
+        for (i = 0; i < NINPUTS; i++) begin
+            data_A[i] = 5;
+            data_B[i] = 1;
+        end
+        @(posedge clk);
+        command_ready = 0;
+        
+        #20;
+
+
+
+        // Avanzar FSM otra vez
+        //repeat (8) begin
+            #10 tx_sent = 1; // quizás debe tener forma de pulso único pa funcar bien
+            #2 tx_sent = 0;
+        //end
+
+        #50;
+
     end
 
 endmodule

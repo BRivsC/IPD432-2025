@@ -39,11 +39,11 @@ switch operation_in
         instruction = 0b00000100;
         write(port,instruction,"uint8");
         vector = transpose(read(port, vector_size, "uint16"));
-        for i = 1:1024
-            if vector(i)>1024
-                vector(i) = vector(i) - 32767.5;
-            end
-        end
+        % for i = 1:1024
+        %     if vector(i)>1024
+        %         vector(i) = vector(i) - 32767.5;
+        %     end
+        % end
     case "eucDist"
         instruction = 0b00000101;
         write(port,instruction,"uint8");

@@ -5,7 +5,7 @@
 // 
 // Create Date: 10/11/2025 11:28:27 PM
 // Design Name: 
-// Module Name: controllUnit
+// Module Name: pipelineCtrlUnit
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -125,9 +125,9 @@ module pipelineCtrlUnit #(parameter NUM_ELEMENTOS = 1024)(
                 enables = 6'b010000;
                 //if(t >= 3) process_ctrl = 1'b1; // Ctrl acumula resultado de todas las restas
                                                 // En paralelo no debería necesitarlo
-                if(t >= $clog2(NUM_ELEMENTOS) + 2) begin // Latencia de adder tree + resta
+                //if(t >= $clog2(NUM_ELEMENTOS) + 1) begin // Latencia de adder tree + resta
+                if(t >= $clog2(NUM_ELEMENTOS) ) begin // Latencia de adder tree + resta
                     NEXT_STATE = STORE;
-                    //begin_transmission = 1'b1;
                 end
             end
             
@@ -143,29 +143,32 @@ module pipelineCtrlUnit #(parameter NUM_ELEMENTOS = 1024)(
 
             SENDING: begin
                 begin_transmission = 1'b1;
-                counter_next = counter + 1;
+                //counter_next = counter + 1;
                 enables = operation[6:1];
-                if (tx_sent) NEXT_STATE = SHIFT_MEM;
+                // Si la operación es ManDist, volver a IDLE, si no, shiftear!
+                if (operation[5]) begin
+                    if (tx_sent) NEXT_STATE = IDLE;
+                end else begin
+                    if (tx_sent) NEXT_STATE = SHIFT_MEM;
+                end
             end
 
             SHIFT_MEM: begin
                 shift_mem = 1'b1;
+                counter_next = counter + 1;
                 enables = operation[6:1];
                 if(operation[1] || operation[2] || operation[3]) begin // vectores
-                //if(operation[1]) begin//readVec
-                    //enables = 6'b000001;
-                    //NEXT_STATE = READ; // ver si este funca mejor en caso de sending
                     if(counter >= NUM_ELEMENTOS - 1) 
                         NEXT_STATE = IDLE;
                     else
                         NEXT_STATE = SENDING;
                 end
                 
-                if(operation[5]) begin//man dist. Resultado solo tiene 1 elemento
-                    if(tx_sent) begin
-                        NEXT_STATE = IDLE;
-                    end
-                end
+                //if(operation[5]) begin//man dist. Resultado solo tiene 1 elemento
+                //    if(tx_sent) begin
+                //        NEXT_STATE = IDLE;
+                //    end
+                //end
             end
             
             default: NEXT_STATE = IDLE;

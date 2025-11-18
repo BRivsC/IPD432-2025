@@ -1,7 +1,7 @@
 clear all; % borra el workspace
 clear; clc;
 %% Configuracion de entorno global
-N_ELEMENTS=1024;  % define el numero de elementos de cada vector
+N_ELEMENTS=8;  % define el numero de elementos de cada vector
 BIT_WIDTH = 10;
 N_TESTS = 150; % Repetición de pruebas
 %PAUSE_S = 0.005;
@@ -9,7 +9,7 @@ N_TESTS = 150; % Repetición de pruebas
 % Configurar puerto serial
 %COM_port = "/dev/ttyUSB1";
 COM_port = "COM13";
-vector_size = 1024;
+vector_size = N_ELEMENTS;
 baud_rate = 115200;
 port = serialport(COM_port,baud_rate);
 port.DataBits = 8;
@@ -28,17 +28,17 @@ for test = 1:N_TESTS
     
     %Genera vectores A y B de 1024 elementos con numeros positivos 
     %(puede adaptarse facilmente si usan negativos y positivos).
-    A=ceil(rand(N_ELEMENTS,1)*2^BIT_WIDTH);
-    B=ceil(rand(N_ELEMENTS,1)*2^BIT_WIDTH);
+    %A=ceil(rand(N_ELEMENTS,1)*2^BIT_WIDTH);
+    %B=ceil(rand(N_ELEMENTS,1)*2^BIT_WIDTH);
 
     % Sanity checks: todos 1 o todos 0
-    %A=0*ceil(rand(N_ELEMENTS,1)*2^BIT_WIDTH) + 1;
-    %B=0*ceil(rand(N_ELEMENTS,1)*2^BIT_WIDTH) + 1;
-    for i = 1:1024
-        if A(i)==1024
+    A=0*ceil(rand(N_ELEMENTS,1)*2^BIT_WIDTH) + 1;
+    B=0*ceil(rand(N_ELEMENTS,1)*2^BIT_WIDTH) + 1;
+    for i = 1:N_ELEMENTS
+        if A(i)==N_ELEMENTS
             A(i) = 0;
         end
-        if B(i)==1024
+        if B(i)==N_ELEMENTS
             B(i) = 0;
         end
     end

@@ -6,6 +6,7 @@ module top_tarea3 #(parameter NUM_ELEMENTOS = 8)(
     input CPU_RESETN,
     input UART_RX_USB,
     output logic UART_TX_USB,
+    output logic PMOD_UART_RX, PMOD_UART_TX, // PMOD 1 y 3
     output logic [6:0] SEG,
     output logic [7:0] AN
     );
@@ -24,19 +25,13 @@ module top_tarea3 #(parameter NUM_ELEMENTOS = 8)(
     logic [31:0]resultado;//resultado de la operacin del processing core
     logic begin_write_src, begin_write_dest;
     logic op_done_src, op_done_dest;
-    //logic [9:0] read_mem_dir;
     logic write_done_src, write_done_dest;
     logic command_ready_src, command_ready_dest;
     logic [7:0] command;
-    //logic [9:0] bram_a_dout;
-    //logic [9:0] bram_b_dout;
     logic [9:0] data_a [NUM_ELEMENTOS-1:0];
     logic [9:0] data_b [NUM_ELEMENTOS-1:0];
     logic tx_sent_src, tx_sent_dest;
-    //logic euc_op_done;
-    //logic process_control;
     logic read_mem_sel;
-    //logic read_enable;
     logic shift_mem;
     logic load_mem;
     
@@ -152,6 +147,7 @@ module top_tarea3 #(parameter NUM_ELEMENTOS = 8)(
 		.tx_data      (tx_data),
 		.tx_busy      (tx_busy) //medible
     );
+
     
 /*
     // Sacar dirección de lectura
@@ -229,7 +225,7 @@ module top_tarea3 #(parameter NUM_ELEMENTOS = 8)(
 
     // Memoria de salida
     resultMem #(
-        .NINPUTS        (8)
+        .NINPUTS        (NUM_ELEMENTOS)
     ) result_mem (
         .par_data_in    (par_result),
         .man_data_in    (man_result),
@@ -289,6 +285,8 @@ module top_tarea3 #(parameter NUM_ELEMENTOS = 8)(
         .op_done(euc_op_done)
     );
     */
+
+    
     outputInterface #(
         .INTER_BYTE_DELAY(1000000),   // ciclos de reloj de espera entre el envio de 2 bytes consecutivos
         .WAIT_FOR_REGISTER_DELAY(100), // tiempo de espera para iniciar la transmision luego de registrar el dato a enviar
@@ -308,5 +306,8 @@ module top_tarea3 #(parameter NUM_ELEMENTOS = 8)(
         .tx_data(tx_data),
         .AN(AN)
     );
+
+    assign PMOD_UART_RX = rx_data;
+    assign PMOD_UART_TX = tx_data;
     
 endmodule
