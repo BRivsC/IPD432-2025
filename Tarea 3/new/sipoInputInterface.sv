@@ -84,7 +84,7 @@ module sipoInputInterface#(
     ) MemA (
         .clk        (input_domain_clk),
         .we         (wea_a),
-        .rst        (reset),
+        //.rst        (reset),
         .addr       (write_address),
         .in         (write_data),
         .out        (data_a)
@@ -96,7 +96,7 @@ module sipoInputInterface#(
     ) MemB (
         .clk        (input_domain_clk),
         .we         (wea_b),
-        .rst        (reset),
+        //.rst        (reset),
         .addr       (write_address),
         .in         (write_data),
         .out        (data_b)

@@ -7,7 +7,7 @@ module resultMem #(
     input [31:0] par_data_in [NINPUTS-1:0],
     input [31:0] man_data_in,
     input [5:0] enables,
-    input clk, rst,
+    input clk,// rst,
     input load_mem, shift_mem,
 
     output logic [31:0] result_out
@@ -23,16 +23,16 @@ module resultMem #(
         .clk        (clk),
         .load       (load_mem),
         .en         (shift_mem),
-        .rst        (rst),
+        //.rst        (rst),
         .in         (par_data_in),
         .out        (ser_result)
     );
 
     // Registro para Manhattan
     always_ff @(posedge clk) begin
-        if (rst) begin
-            man_result_ff <= 1'b0;
-        end else
+        //if (rst) begin
+        //    man_result_ff <= 1'b0;
+        //end else
         if (load_mem) begin
             man_result_ff <= man_data_in;
         end

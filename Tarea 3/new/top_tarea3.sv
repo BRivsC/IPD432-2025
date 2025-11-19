@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 
-module top_tarea3 #(parameter NUM_ELEMENTOS = 8)(
+module top_tarea3 #(parameter NUM_ELEMENTOS = 16)(
     input CLK100MHZ,
     input CPU_RESETN,
     input UART_RX_USB,
@@ -138,6 +138,7 @@ module top_tarea3 #(parameter NUM_ELEMENTOS = 8)(
     
     uart_basic #(
 		.CLK_FREQUENCY(100_000_000), // reloj base de entrada
+		//.CLK_FREQUENCY(50_000_000), // reloj base de entrada
 		.BAUD_RATE(115200)
 	) uart_basic_inst (
 		.clk          (clk_input),
@@ -209,7 +210,7 @@ module top_tarea3 #(parameter NUM_ELEMENTOS = 8)(
         .man_data_in    (man_result),
         .enables        (enables),
         .clk            (clk_process),
-        .rst            (reset_process),
+        //.rst            (reset_process),
         .load_mem       (load_mem),
         .shift_mem      (shift_mem),
         .result_out     (resultado)
