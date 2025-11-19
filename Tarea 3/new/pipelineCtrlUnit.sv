@@ -145,7 +145,7 @@ module pipelineCtrlUnit #(parameter NUM_ELEMENTOS = 1024)(
                 begin_transmission = 1'b1;
                 //counter_next = counter + 1;
                 enables = operation[6:1];
-                // Si la operación es ManDist, volver a IDLE, si no, shiftear!
+                // Si la operación es ManDist, volver a IDLE. Si no, shiftear!
                 if (operation[5]) begin
                     if (tx_sent) NEXT_STATE = IDLE;
                 end else begin
@@ -157,18 +157,13 @@ module pipelineCtrlUnit #(parameter NUM_ELEMENTOS = 1024)(
                 shift_mem = 1'b1;
                 counter_next = counter + 1;
                 enables = operation[6:1];
-                if(operation[1] || operation[2] || operation[3]) begin // vectores
-                    if(counter >= NUM_ELEMENTOS - 1) 
-                        NEXT_STATE = IDLE;
-                    else
-                        NEXT_STATE = SENDING;
-                end
-                
-                //if(operation[5]) begin//man dist. Resultado solo tiene 1 elemento
-                //    if(tx_sent) begin
-                //        NEXT_STATE = IDLE;
-                //    end
+                //if(operation[1] || operation[2] || operation[3]) begin // vectores
+                if(counter >= NUM_ELEMENTOS - 1) 
+                    NEXT_STATE = IDLE;
+                else
+                    NEXT_STATE = SENDING;
                 //end
+                
             end
             
             default: NEXT_STATE = IDLE;

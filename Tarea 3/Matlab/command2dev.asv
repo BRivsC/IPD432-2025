@@ -9,7 +9,12 @@ if nargin == 3
     port = varargin{3};
     BRAM_in = varargin{2};
 end
-
+% if nargin == 4
+%     operation_in = varargin{1};
+%     port = varargin{3};
+%     BRAM_in = varargin{2};
+%     vector_size = varargin{4};
+% end
 %vector_size = 1024;
 vector_size = 8;
 baud_rate = 115200;

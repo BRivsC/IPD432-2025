@@ -5,8 +5,9 @@ module top_tarea3 #(parameter NUM_ELEMENTOS = 8)(
     input CLK100MHZ,
     input CPU_RESETN,
     input UART_RX_USB,
+
     output logic UART_TX_USB,
-    output logic PMOD_UART_RX, PMOD_UART_TX, // PMOD 1 y 3
+    output logic PMOD_UART_RX, PMOD_RX_RDY, PMOD_UART_TX, PMOD_TX_BUSY,
     output logic [6:0] SEG,
     output logic [7:0] AN
     );
@@ -18,9 +19,11 @@ module top_tarea3 #(parameter NUM_ELEMENTOS = 8)(
     logic reset_process;
     logic [7:0]rx_data;//byte recibido de uart
     logic rx_ready;//recepcion de 1 byte de uart terminada
+    
     logic tx_start;//bit para iniciar transmision
     logic [7:0]tx_data;//byte de datos a transmitir
     logic tx_busy;//byte que indica que el canal de envio esta ocupado
+
     logic [5:0]enables;//flags que indican la operacion a realizar
     logic [31:0]resultado;//resultado de la operacin del processing core
     logic begin_write_src, begin_write_dest;
@@ -149,31 +152,6 @@ module top_tarea3 #(parameter NUM_ELEMENTOS = 8)(
     );
 
     
-/*
-    // Sacar dirección de lectura
-
-    inputInterface #(
-        .NUM_ELEMENTOS           (NUM_ELEMENTOS)
-    ) u_inputInterface (
-        .input_domain_clk        (clk_input),
-        .processor_domain_clk    (clk_process),
-        .reset                   (reset_input),
-        .rx_ready                (rx_ready),
-        .begin_write             (begin_write_dest),
-        .op_done                 (op_done_dest),
-        .rx_data                 (rx_data),
-        .read_mem_dir            (read_mem_dir),
-        .write_done              (write_done_src),
-        .command_ready           (command_ready_src),
-        .command                 (command),
-        //  Sigue formato para MainCtrl (dir memoria 0A, 1B, write, read, sum, avg, euc dist, man dist y dot prod)
-        .data_a                  (bram_a_dout),
-        //.data_b                  (data_b)
-        .data_b                  (bram_b_dout)
-    );
-
-*/
-
     sipoInputInterface #(
         .NUM_ELEMENTOS    (NUM_ELEMENTOS)
     ) input_interface (
@@ -236,55 +214,7 @@ module top_tarea3 #(parameter NUM_ELEMENTOS = 8)(
         .shift_mem      (shift_mem),
         .result_out     (resultado)
     );
-/*
-    pisoMem #(
-        .IWIDTH     (32),
-        .NINPUTS    (NUM_ELEMENTOS)
-    ) piso_mem (
-        .clk        (clk_process),
-        .load       (load_mem),
-        .en         (shift_mem),
-        .rst        (reset_process),
-        .in         (par_result),
-        .out        (resultado)
-    );
-    
-*/
-    /*
-    controllUnit #(
-        .NUM_ELEMENTOS        (NUM_ELEMENTOS)
-    ) u_controllUnit (
-        .clk                  (clk_process),                //reloj 100Mhz
-        .reset                (reset_process),              //reset sincronizado
-        .command_ready        (command_ready_dest),      //señal para cambiar de comando de IDLE a una operacion
-        .write_done           (write_done_dest),         //señal que indica que se termino toda la operacion de escritura
-        .tx_sent              (tx_sent_dest),            //señal de que se envio un dato completo
-        .op_ready             (euc_op_done),           //señal de que la operacion euc dist esta lista
-        .command              (command),            //dir memoria 0A, 1B, dot prod, man dist, euc dist, avg, sum, read y write. En ese orden
-        .process_ctrl         (process_control),       //seña para varios controles del processing core
-        .read_enable          (read_enable),        //enable para las memorias para leer
-        .begin_transmision    (op_done_src),  //señal para iniciar la transmision cuando hay un resultado listo
-        .begin_write          (begin_write_src),        //señal para empezar la escritura
-        .enables              (enables),            //arreglo de enables para las distintas operaciones. Mismo orden que command
-        //direccion de memoria a leer
-        //.mem_dir              (read_mem_dir)
-        .mem_dir              (read_mem_dir)
-    );
-    
 
-    
-    processingCore #(.NUM_ELEMENTOS(NUM_ELEMENTOS))
-    pCore(
-        .data_A({6'b0 , bram_a_dout}),
-        .data_B({6'b0 , bram_b_dout}),
-        .enables(enables),
-        .ctrl(process_control),
-        .clk(clk_process),
-        .reset(reset_process),
-        .result(resultado),
-        .op_done(euc_op_done)
-    );
-    */
 
     
     outputInterface #(
@@ -307,7 +237,10 @@ module top_tarea3 #(parameter NUM_ELEMENTOS = 8)(
         .AN(AN)
     );
 
-    assign PMOD_UART_RX = rx_data;
-    assign PMOD_UART_TX = tx_data;
-    
+    // Descomentar esto y lo del constraint para usar el analizador lógico externo
+    //assign PMOD_UART_RX = rx_data;
+    //assign PMOD_UART_TX = tx_data;
+    //assign PMOD_RX_RDY = rx_ready;    
+    //assign PMOD_TX_BUSY = tx_busy;
+
 endmodule

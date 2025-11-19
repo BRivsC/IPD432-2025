@@ -2,7 +2,7 @@
 
 module tb_ctrl_proce;
 
-    localparam NINPUTS = 1024;
+    localparam NINPUTS = 8;
 
     // ===============================
     // Señales del sistema
@@ -102,7 +102,7 @@ module tb_ctrl_proce;
         // SUM = 0000_0100
         // ===============================
 
-        /*
+        
         @(posedge clk);
         command = 8'b0000_0100;
         command_ready = 1;
@@ -126,7 +126,7 @@ module tb_ctrl_proce;
             $display("par_result[%0d] = %0d", i, par_result[i]);
 
         $display("man_result = %0d", man_result);
-*/
+
 
         // ==========================================================
         // SEGUNDA OPERACIÓN : ManDist (bit5 = 1)
@@ -153,7 +153,7 @@ module tb_ctrl_proce;
             #2 tx_sent = 0;
         //end
 
-        #50;
+        #50 $finish;
 
     end
 

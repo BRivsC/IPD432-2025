@@ -132,12 +132,11 @@ set_property -dict { PACKAGE_PIN C12   IOSTANDARD LVCMOS33 } [get_ports { CPU_RE
 
 ##Pmod Header JD
 
-#set_property -dict { PACKAGE_PIN H4    IOSTANDARD LVCMOS33 } [get_ports { JD[1] }]; #IO_L21N_T3_DQS_35 Sch=jd[1]
-set_property -dict { PACKAGE_PIN H4    IOSTANDARD LVCMOS33 } [get_ports { PMOD_UART_RX }]; #IO_L21N_T3_DQS_35 Sch=jd[1]
-#set_property -dict { PACKAGE_PIN H1    IOSTANDARD LVCMOS33 } [get_ports { JD[2] }]; #IO_L17P_T2_35 Sch=jd[2]
-#set_property -dict { PACKAGE_PIN G1    IOSTANDARD LVCMOS33 } [get_ports { JD[3] }]; #IO_L17N_T2_35 Sch=jd[3]
-set_property -dict { PACKAGE_PIN G1    IOSTANDARD LVCMOS33 } [get_ports { PMOD_UART_TX }]; #IO_L17N_T2_35 Sch=jd[3]
-#set_property -dict { PACKAGE_PIN G3    IOSTANDARD LVCMOS33 } [get_ports { JD[4] }]; #IO_L20N_T3_35 Sch=jd[4]
+# Descomentar para usar el analizador lógico externo
+#set_property -dict { PACKAGE_PIN H4    IOSTANDARD LVCMOS33 } [get_ports { PMOD_UART_RX }]; #IO_L21N_T3_DQS_35 Sch=jd[1]
+#set_property -dict { PACKAGE_PIN H1    IOSTANDARD LVCMOS33 } [get_ports { PMOD_RX_RDY }]; #IO_L17P_T2_35 Sch=jd[2]
+#set_property -dict { PACKAGE_PIN G1    IOSTANDARD LVCMOS33 } [get_ports { PMOD_UART_TX }]; #IO_L17N_T2_35 Sch=jd[3]
+#set_property -dict { PACKAGE_PIN G3    IOSTANDARD LVCMOS33 } [get_ports { PMOD_TX_BUSY }]; #IO_L20N_T3_35 Sch=jd[4]
 #set_property -dict { PACKAGE_PIN H2    IOSTANDARD LVCMOS33 } [get_ports { JD[7] }]; #IO_L15P_T2_DQS_35 Sch=jd[7]
 #set_property -dict { PACKAGE_PIN G4    IOSTANDARD LVCMOS33 } [get_ports { JD[8] }]; #IO_L20P_T3_35 Sch=jd[8]
 #set_property -dict { PACKAGE_PIN G2    IOSTANDARD LVCMOS33 } [get_ports { JD[9] }]; #IO_L15N_T2_DQS_35 Sch=jd[9]
