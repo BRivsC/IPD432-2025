@@ -10,16 +10,11 @@ module sipoMem#(
     input logic [IWIDTH-1:0] in,
     output logic [IWIDTH-1:0] out [NINPUTS-1:0] 
 );
-
+    (* ram_style = "distributed" *)
     logic [IWIDTH-1:0] registers [NINPUTS-1:0];
 
     // Banco de registros
     always_ff @(posedge clk) begin
-        //if (rst) begin
-        //    for (int i = 0; i < NINPUTS; i++) begin
-        //        registers[i] <= 0;
-        //    end
-        //end else
         if (we) begin
             registers[addr] <= in;
         end 
