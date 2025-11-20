@@ -36,7 +36,8 @@ module pipelineCtrlUnit #(parameter NUM_ELEMENTOS = 1024)(
     output logic [5:0] enables//arreglo de enables para las distintas operaciones. Mismo orden que command (en_dot, en_man, en_euc, en_avg, en_sum, en_read)
     );
     
-    enum logic [8:0] {IDLE, WRITE, READ, SUM, AVG, MAN_DIST, STORE, SHIFT_MEM, SENDING} STATE, NEXT_STATE;
+    //enum logic [8:0] {IDLE, WRITE, READ, SUM, AVG, MAN_DIST, STORE, SHIFT_MEM, SENDING} STATE, NEXT_STATE;
+    enum logic [7:0] {IDLE, WRITE, READSUM, AVG, MAN_DIST, STORE, SHIFT_MEM, SENDING} STATE, NEXT_STATE;
     logic [$clog2(NUM_ELEMENTOS)-1:0]counter ,counter_next;
     //logic [$clog2(NUM_ELEMENTOS)-1:0]counter;
     //logic [$clog2(NUM_ELEMENTOS)-1:0]t;//timer para operaciones de estado
@@ -48,6 +49,7 @@ module pipelineCtrlUnit #(parameter NUM_ELEMENTOS = 1024)(
     always_ff @(posedge clk)begin
         if(reset) begin
             STATE <= IDLE;
+            counter <= 0;
             operation <= 8'h0;
         end
         else begin
@@ -105,8 +107,9 @@ module pipelineCtrlUnit #(parameter NUM_ELEMENTOS = 1024)(
                 end*/
                     
                     if(command[0]) NEXT_STATE = WRITE;
-                    else if(command[1]) NEXT_STATE = READ;
-                    else if(command[2]) NEXT_STATE = SUM;
+                    //else if(command[1]) NEXT_STATE = READ;
+                    else if(command[1]  || command[2]) NEXT_STATE = READSUM;
+                    //else if(command[2]) NEXT_STATE = SUM;
                     else if(command[3]) NEXT_STATE = AVG;
                     else if(command[5]) NEXT_STATE = MAN_DIST;
                 end
@@ -118,9 +121,11 @@ module pipelineCtrlUnit #(parameter NUM_ELEMENTOS = 1024)(
                 if(write_done) 
                     NEXT_STATE = IDLE;
             end
-            
-            READ: begin
-                enables = 6'b000001;
+
+
+            READSUM: begin
+                //enables = 6'b000001;
+                enables = operation[6:1];
                 read_mem_sel = ~operation[7];
                 //if(t >= 1) begin // ni idea de dónde sale ese 3 pero debe ser pa contar ciclos
                 NEXT_STATE = STORE;
@@ -128,16 +133,30 @@ module pipelineCtrlUnit #(parameter NUM_ELEMENTOS = 1024)(
                 //end
             end
             
+
+            /*
+            READ: begin
+                //enables = 6'b000001;
+                enables = operation[6:1];
+                read_mem_sel = ~operation[7];
+                //if(t >= 1) begin // ni idea de dónde sale ese 3 pero debe ser pa contar ciclos
+                NEXT_STATE = STORE;
+                    //begin_transmission = 1'b1;
+                //end
+            end
             SUM: begin
-                enables = 6'b000010;
+                //enables = 6'b000010;
+                enables = operation[6:1];
                 //if(t >= 1) begin // SUM toma 1 ciclo en teoría
                 NEXT_STATE = STORE;
                     //begin_transmission = 1'b1;
                 //end
             end
+            */
             
             AVG: begin
-                enables = 6'b000100;
+                //enables = 6'b000100;
+                enables = operation[6:1];
                 counter_next = counter + 1;
                 //inc_counter = 1'b1;
                 //if(t >= 2) begin

@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 
-module top_tarea3 #(parameter NUM_ELEMENTOS = 8)(
+module top_tarea3 #(parameter NUM_ELEMENTOS = 1024)(
     input CLK100MHZ,
     input CPU_RESETN,
     input UART_RX_USB,
