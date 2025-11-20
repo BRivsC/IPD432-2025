@@ -14,7 +14,8 @@ module divBy2Vec #(
         for (i=0; i < NINPUTS ; i++) begin
             always_ff @(posedge clk) begin
                 //for (int i = 0; i < NINPUTS; i++)
-                    out[i] <= data[i] >> 1;
+                    //out[i] <= data[i] >> 1;
+                    out[i] <= data[i] / 2;
             end
         end
     //endgenerate

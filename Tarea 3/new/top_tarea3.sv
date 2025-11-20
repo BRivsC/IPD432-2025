@@ -1,13 +1,13 @@
 `timescale 1ns / 1ps
 
 
-module top_tarea3 #(parameter NUM_ELEMENTOS = 512)(
+module top_tarea3 #(parameter NUM_ELEMENTOS = 8)(
     input CLK100MHZ,
     input CPU_RESETN,
     input UART_RX_USB,
 
     output logic UART_TX_USB,
-    output logic PMOD_UART_RX, PMOD_RX_RDY, PMOD_UART_TX, PMOD_TX_BUSY,
+    //output logic PMOD_UART_RX, PMOD_RX_RDY, PMOD_UART_TX, PMOD_TX_BUSY,
     output logic [6:0] SEG,
     output logic [7:0] AN
     );

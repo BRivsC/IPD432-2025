@@ -17,12 +17,6 @@ module pisoMem#(
 
     // Cargar y shiftear
     always_ff @(posedge clk) begin 
-        //if (rst) begin
-        //    for (int i = 0; i < NINPUTS; i++) begin
-        //        shift_regs[i] <= 0;
-        //    end
-        //end else
-        // Cargar
         if (load) begin
             for (int i = 0; i < NINPUTS; i++) begin
                 shift_regs[i] <= in[i];

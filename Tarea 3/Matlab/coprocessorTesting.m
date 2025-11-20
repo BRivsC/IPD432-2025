@@ -3,7 +3,7 @@ clear; clc;
 %% Configuracion de entorno global
 NUM_ELEMENTOS = 8;  % define el numero de elementos de cada vector
 BIT_WIDTH = 10;
-N_TESTS = 150; % Repetición de pruebas
+N_TESTS = 300; % Repetición de pruebas
 
 % Configurar puerto serial
 %COM_port = "/dev/ttyUSB1";
@@ -27,21 +27,13 @@ for test = 1:N_TESTS
     
     %Genera vectores A y B de 1024 elementos con numeros positivos 
     %(puede adaptarse facilmente si usan negativos y positivos).
-    A=ceil(rand(NUM_ELEMENTOS,1)*2^BIT_WIDTH);
-    B=ceil(rand(NUM_ELEMENTOS,1)*2^BIT_WIDTH);
+    A=ceil(rand(NUM_ELEMENTOS,1)*2^BIT_WIDTH)-1;
+    B=ceil(rand(NUM_ELEMENTOS,1)*2^BIT_WIDTH)-1;
 
     % Sanity checks: todos 1 o todos 0
-    %A=0*ceil(rand(N_ELEMENTS,1)*2^BIT_WIDTH) + 1;
-    %B=0*ceil(rand(N_ELEMENTS,1)*2^BIT_WIDTH) + 1;
-    for i = 1:NUM_ELEMENTOS
-        if A(i)==NUM_ELEMENTOS
-            A(i) = 0;
-        end
-        if B(i)==NUM_ELEMENTOS
-            B(i) = 0;
-        end
-    end
-    
+    %A=0*ceil(rand(NUM_ELEMENTOS,1)*2^BIT_WIDTH);
+    %B=0*ceil(rand(NUM_ELEMENTOS,1)*2^BIT_WIDTH) +1;
+
     %% Guarda vectores A y B (cada uno de una columna de 1024 filas) en un
     %archivo de texto. Cada linea del archivo contiene un elemento.
     h= fopen('vectorA.txt', 'w');

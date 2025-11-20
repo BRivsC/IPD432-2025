@@ -14,7 +14,7 @@ module sipoInputInterface#(
     );
 
     logic [9:0] write_data;
-    logic [9:0] write_address;
+    //logic [9:0] write_address;
     logic [6:0] command_out;
     logic [7:0] recv_data;
     logic count_done;
@@ -45,7 +45,8 @@ module sipoInputInterface#(
         .clk      (input_domain_clk),
         .reset    (reset),
         .inc      (inc),
-        .count    (write_address),
+        //.count    (write_address), // edit: ahora sólo se usa para contar cuántos elem han sido escritos
+        .count    (),
         .count_done (count_done)
     );
     
@@ -55,16 +56,7 @@ module sipoInputInterface#(
     logic bram_info_in;
     assign op_code_in = rx_data[2:0];
     assign bram_info_in = rx_data[7];
-    //commandDecoder u_commandDecoder (
-    //    .clk            (input_domain_clk),
-    //    .reset          (reset),
-    //    .rx_ready       (rx_ready),
-    //    .op_code_in     (op_code_in),
-    //    .bram_info_in   (bram_info_in),
-    //    .op_done        (write_done),   //  Temporalmente conectado a write_done. Conectar a los otros done a medida que se instancien los otros módulos
-    //    .bram_sel       (bram_sel),
-    //    .command_out    (command_out) // Orden: Write, Read, Sum, Avg, Euc, Man, Dot
-    //);
+
 
     commandDecoder u_commandDecoder (
         .clk              (input_domain_clk),
@@ -78,6 +70,27 @@ module sipoInputInterface#(
         .command_ready    (command_ready)
     );
 
+    shiftSipoMem #(
+        .IWIDTH     (10),
+        .NINPUTS    (NUM_ELEMENTOS)
+    ) MemA (
+        .clk        (input_domain_clk),
+        .enable     (wea_a),
+        .in         (write_data),
+        .out        (data_a)
+    );
+
+    shiftSipoMem #(
+        .IWIDTH     (10),
+        .NINPUTS    (NUM_ELEMENTOS)
+    ) MemB (
+        .clk        (input_domain_clk),
+        .enable     (wea_b),
+        .in         (write_data),
+        .out        (data_b)
+    );
+
+/*
     sipoMem #(
         .IWIDTH     (10),
         .NINPUTS    (NUM_ELEMENTOS)
@@ -101,37 +114,7 @@ module sipoInputInterface#(
         .in         (write_data),
         .out        (data_b)
     );
-
-    /*
-    blk_mem_gen_0 BRAMA (
-        .clka(input_domain_clk),   // input wire clka
-        .ena(1),                   // input wire ena
-        .wea(wea_a),               // input wire [0 : 0] wea
-        .addra(write_address),     // input wire [9 : 0] addra
-        .dina(write_data),         // input wire [9 : 0] dina
-        .douta(),                  // output wire [9 : 0] douta
-        .clkb(processor_domain_clk),                // input wire clkb
-        .enb(1),                   // input wire enb
-        .web(0),                   // input wire [0 : 0] web
-        .addrb(read_mem_dir),  // input wire [9 : 0] addrb
-        .dinb(10'd0),              // input wire [9 : 0] dinb
-        .doutb(data_a)        // output wire [9 : 0] doutb
-    );
-
-    blk_mem_gen_0 BRAMB (
-        .clka(input_domain_clk),    // input wire clka
-        .ena(1),                    // input wire ena
-        .wea(wea_b),                // input wire [0 : 0] wea
-        .addra(write_address),      // input wire [9 : 0] addra
-        .dina(write_data),          // input wire [9 : 0] dina
-        .douta(),                   // output wire [9 : 0] douta
-        .clkb(processor_domain_clk),// input wire clkb
-        .enb(1),                    // input wire enb
-        .web(0),                    // input wire [0 : 0] web
-        .addrb(read_mem_dir),   // input wire [9 : 0] addrb
-        .dinb(10'd0),               // input wire [9 : 0] dinb
-        .doutb(data_b)         // output wire [9 : 0] doutb
-    );
 */
+
 
 endmodule

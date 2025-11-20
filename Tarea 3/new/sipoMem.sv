@@ -10,7 +10,8 @@ module sipoMem#(
     input logic [IWIDTH-1:0] in,
     output logic [IWIDTH-1:0] out [NINPUTS-1:0] 
 );
-    (* ram_style = "distributed" *)
+    //(* ram_style = "distributed" *) // ojalá este me reduzca el uso de luts
+                                    // edit: lo aumentó >:(
     logic [IWIDTH-1:0] registers [NINPUTS-1:0];
 
     // Banco de registros
